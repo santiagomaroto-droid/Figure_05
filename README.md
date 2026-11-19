@@ -126,3 +126,5 @@ python run_all_validations.py
 ### Skyhook-Free 45.0 kg Crate Deadlift & ISO/TS 15066 Collision + 1000BASE-T1 HIL
 ![MuJoCo 3D 45 kg Industrial Deadlift](figure05_mujoco_deadlift_benchmark.png)
 ![ISO/TS 15066 Collision & 1000BASE-T1 Ring Failover](figure05_safety_bus_benchmark.png)
+
+👉Live 3D Demo robot online: https://santiagomaroto-droid.github.io/Figure_05/
