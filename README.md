@@ -5,6 +5,8 @@
 > **Prepared for:** Brett Adcock (CEO) & Kyle Edelberg (VP Hardware / Mechanical Eng.), Figure AI  
 > **Mission:** Solving the 5 critical bottlenecks of autonomous humanoid deployment at 100,000+ unit scale.
 
+👉Live 3D Demo robot online: https://santiagomaroto-droid.github.io/Figure_05/
+
 ---
 
 ## 🚀 Key Highlights & Architectural Leaps
