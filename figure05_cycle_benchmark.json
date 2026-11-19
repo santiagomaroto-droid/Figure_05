@@ -1,0 +1,13 @@
+{
+    "automotive_task": "Sheet-Metal Bracket Bin-Pick, Fixture Alignment & Precision Insertion",
+    "human_worker_cycle_seconds": 21.8,
+    "figure02_cycle_seconds": 59.7,
+    "figure05_cycle_seconds": 16.35,
+    "figure05_1k_mc_p95_seconds": 17.01,
+    "speedup_vs_figure02": 3.65,
+    "insertion_residual_error_mm": 0.0,
+    "insertion_seat_force_n": 35.0,
+    "mtbf_hours": 4850.0,
+    "fleet_oee_percent": 98.06,
+    "payback_period_months": 2.11
+}

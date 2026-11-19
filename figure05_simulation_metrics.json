@@ -1,0 +1,16 @@
+{
+    "robot_codename": "Figure 05",
+    "system_mass_kg": 54.5,
+    "max_continuous_payload_kg": 35.0,
+    "max_peak_deadlift_kg": 45.0,
+    "class_gamma_peak_torque_nm": 510.0,
+    "class_gamma_cont_torque_nm": 180.0,
+    "steady_state_winding_temp_c": 83.2,
+    "steady_state_stator_temp_c": 69.1,
+    "steady_state_housing_temp_c": 56.1,
+    "structural_battery_kwh": 2.2,
+    "shift_hours_achieved": 8.5,
+    "soc_remaining_percent": 22.9,
+    "regen_energy_recovery_ratio": 0.139,
+    "regen_energy_recovered_wh": 123.2
+}

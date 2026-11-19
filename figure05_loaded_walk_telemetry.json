@@ -1,0 +1,21 @@
+{
+  "module": "simulate_loaded_walk_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 5.998,
+  "robot_mass_kg": 54.5,
+  "tote_mass_kg": 15.0,
+  "combined_mass_kg": 69.5,
+  "theoretical_weight_n": 681.6,
+  "steady_mean_total_grf_n": 681.5,
+  "forward_distance_m": 2.008,
+  "tote_min_height_m": 1.014,
+  "tote_final_height_m": 1.028,
+  "tote_rms_vertical_oscillation_mm": 11.7,
+  "roll_rms_deg": 1.2,
+  "pitch_rms_deg": 2.42,
+  "peak_knee_torque_nm": 122.3,
+  "peak_shoulder_torque_nm": 39.8,
+  "completed_without_fall": true,
+  "tote_carried_without_drop": true
+}

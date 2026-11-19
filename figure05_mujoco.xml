@@ -1,0 +1,231 @@
+<mujoco model="figure_05_apex">
+  <compiler angle="radian" coordinate="local" meshdir="." autolimits="true"/>
+
+  <option timestep="0.002" gravity="0 0 -9.80665" integrator="implicitfast">
+    <flag contact="enable" energy="enable"/>
+  </option>
+
+  <default>
+    <joint damping="1.2" armature="0.06" frictionloss="0.15"/>
+    <geom contype="0" conaffinity="0" material="mat_carbon"/>
+    <motor ctrlrange="-510 510"/>
+  </default>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.06 0.08 0.12" rgb2="0.02 0.03 0.05" width="512" height="512"/>
+    <texture name="grid_tex" type="2d" builtin="checker" rgb1="0.12 0.15 0.22" rgb2="0.08 0.10 0.16" width="512" height="512"/>
+    <material name="mat_grid" texture="grid_tex" texrepeat="20 20" reflectance="0.15"/>
+    <material name="mat_carbon" rgba="0.10 0.12 0.15 1.0" specular="0.6" shininess="0.4"/>
+    <material name="mat_cyan" rgba="0.02 0.52 0.78 1.0" specular="0.8" shininess="0.8"/>
+    <material name="mat_titanium" rgba="0.65 0.68 0.72 1.0" specular="0.9" shininess="0.9"/>
+    <material name="mat_visor" rgba="0.22 0.74 0.97 1.0" emission="1.5"/>
+    <material name="mat_skin" rgba="0.14 0.16 0.20 1.0"/>
+  </asset>
+
+  <worldbody>
+    <geom name="floor" type="plane" size="10 10 0.1" contype="1" conaffinity="1" friction="1.2 0.01 0.001" material="mat_grid"/>
+    <light directional="true" diffuse="0.9 0.9 0.9" specular="0.3 0.3 0.3" pos="0 0 5.0" dir="0 0 -1"/>
+    <light directional="false" diffuse="0.2 0.6 0.8" pos="-2 -2 3.0"/>
+
+    <!-- Floating Base Pelvis (2.2 kWh Structural Monocoque Battery: 8.80 kg) -->
+    <!-- Total dry system mass carefully balanced to exact 54.50 kg spec -->
+    <body name="pelvis" pos="0 0 0.925">
+      <freejoint name="root"/>
+      <geom name="pelvis_geom" type="box" size="0.13 0.11 0.08" mass="8.80" material="mat_carbon"/>
+      <site name="imu_site" pos="0 0 0"/>
+
+      <!-- Torso / Spine Subsystem (1.20 + 1.40 + 9.80 = 12.40 kg) -->
+      <body name="torso_yaw" pos="0 0 0.10">
+        <joint name="torso_yaw_joint" type="hinge" axis="0 0 1" range="-1.57 1.57" damping="3.0"/>
+        <geom type="cylinder" size="0.052 0.035" mass="1.20" material="mat_cyan"/>
+
+        <body name="torso_pitch" pos="0 0 0.08">
+          <joint name="torso_pitch_joint" type="hinge" axis="0 1 0" range="-0.6 1.2" damping="4.0"/>
+          <geom type="cylinder" size="0.052 0.035" mass="1.40" material="mat_titanium"/>
+
+          <body name="upper_chest" pos="0 0 0.18">
+            <joint name="torso_roll_joint" type="hinge" axis="1 0 0" range="-0.5 0.5" damping="3.0"/>
+            <geom name="chest_geom" type="box" size="0.14 0.155 0.18" mass="9.80" material="mat_carbon"/>
+
+            <!-- Head & Vision Visor (1.40 kg) -->
+            <body name="head" pos="0 0 0.25">
+              <joint name="neck_yaw_joint" type="hinge" axis="0 0 1" range="-1.5 1.5" damping="0.8"/>
+              <joint name="neck_pitch_joint" type="hinge" axis="0 1 0" range="-0.8 0.8" damping="0.8"/>
+              <geom type="sphere" size="0.095" mass="1.40" material="mat_carbon"/>
+              <geom type="box" size="0.065 0.025 0.02" pos="0.075 0 0.02" mass="0.0" material="mat_visor"/>
+              <site name="rgbd_camera" pos="0.095 0 0.02"/>
+            </body>
+
+            <!-- Left Arm (5.15 kg total) -->
+            <body name="left_shoulder_base" pos="0 0.21 0.08">
+              <joint name="left_shoulder_pitch" type="hinge" axis="0 1 0" range="-3.14 2.0" damping="1.5"/>
+              <geom type="sphere" size="0.048" mass="1.00" material="mat_cyan"/>
+
+              <body name="left_shoulder_roll" pos="0 0.04 0">
+                <joint name="left_shoulder_roll" type="hinge" axis="1 0 0" range="-0.4 2.0" damping="1.5"/>
+                <geom type="cylinder" size="0.038 0.04" mass="0.80" material="mat_titanium"/>
+
+                <body name="left_upper_arm" pos="0 0.03 0">
+                  <joint name="left_shoulder_yaw" type="hinge" axis="0 0 1" range="-2.5 2.5" damping="1.2"/>
+                  <geom type="capsule" fromto="0 0 0 0 0 -0.26" size="0.036" mass="1.50" material="mat_carbon"/>
+
+                  <body name="left_forearm" pos="0 0 -0.26">
+                    <joint name="left_elbow" type="hinge" axis="0 1 0" range="-2.6 0.0" damping="1.2"/>
+                    <geom type="capsule" fromto="0 0 0 0 0 -0.24" size="0.030" mass="1.10" material="mat_carbon"/>
+
+                    <body name="left_hand" pos="0 0 -0.24">
+                      <joint name="left_wrist_pitch" type="hinge" axis="0 1 0" range="-1.4 1.4" damping="0.6"/>
+                      <joint name="left_wrist_roll" type="hinge" axis="1 0 0" range="-1.2 1.2" damping="0.6"/>
+                      <geom type="box" size="0.02 0.042 0.055" pos="0 0 -0.055" mass="0.75" material="mat_skin"/>
+                      <site name="left_palm_tactile" pos="0 0 -0.10"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+
+            <!-- Right Arm (5.15 kg total) -->
+            <body name="right_shoulder_base" pos="0 -0.21 0.08">
+              <joint name="right_shoulder_pitch" type="hinge" axis="0 1 0" range="-3.14 2.0" damping="1.5"/>
+              <geom type="sphere" size="0.048" mass="1.00" material="mat_cyan"/>
+
+              <body name="right_shoulder_roll" pos="0 -0.04 0">
+                <joint name="right_shoulder_roll" type="hinge" axis="1 0 0" range="-2.0 0.4" damping="1.5"/>
+                <geom type="cylinder" size="0.038 0.04" mass="0.80" material="mat_titanium"/>
+
+                <body name="right_upper_arm" pos="0 -0.03 0">
+                  <joint name="right_shoulder_yaw" type="hinge" axis="0 0 1" range="-2.5 2.5" damping="1.2"/>
+                  <geom type="capsule" fromto="0 0 0 0 0 -0.26" size="0.036" mass="1.50" material="mat_carbon"/>
+
+                  <body name="right_forearm" pos="0 0 -0.26">
+                    <joint name="right_elbow" type="hinge" axis="0 1 0" range="-2.6 0.0" damping="1.2"/>
+                    <geom type="capsule" fromto="0 0 0 0 0 -0.24" size="0.030" mass="1.10" material="mat_carbon"/>
+
+                    <body name="right_hand" pos="0 0 -0.24">
+                      <joint name="right_wrist_pitch" type="hinge" axis="0 1 0" range="-1.4 1.4" damping="0.6"/>
+                      <joint name="right_wrist_roll" type="hinge" axis="1 0 0" range="-1.2 1.2" damping="0.6"/>
+                      <geom type="box" size="0.02 0.042 0.055" pos="0 0 -0.055" mass="0.75" material="mat_skin"/>
+                      <site name="right_palm_tactile" pos="0 0 -0.10"/>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+
+          </body>
+        </body>
+      </body>
+
+      <!-- Left Leg (6-DoF, Class Gamma Actuators: 10.80 kg total) -->
+      <body name="left_hip_yaw" pos="0 0.105 -0.08">
+        <joint name="left_hip_yaw" type="hinge" axis="0 0 1" range="-1.2 1.2" damping="2.5"/>
+        <geom type="cylinder" size="0.052 0.03" mass="1.10" material="mat_cyan"/>
+
+        <body name="left_hip_roll" pos="0 0 -0.04">
+          <joint name="left_hip_roll" type="hinge" axis="1 0 0" range="-0.6 0.4" damping="3.0"/>
+          <geom type="cylinder" size="0.052 0.03" mass="1.30" material="mat_titanium"/>
+
+          <body name="left_thigh" pos="0 0 0">
+            <joint name="left_hip_pitch" type="hinge" axis="0 1 0" range="-1.8 1.2" damping="3.5"/>
+            <geom type="capsule" fromto="0 0 0 0 0 -0.40" size="0.048" mass="3.80" material="mat_carbon"/>
+
+            <body name="left_shank" pos="0 0 -0.40">
+              <joint name="left_knee" type="hinge" axis="0 1 0" range="0.0 2.5" damping="3.5"/>
+              <geom type="capsule" fromto="0 0 0 0 0 -0.40" size="0.042" mass="2.80" material="mat_carbon"/>
+
+              <body name="left_ankle" pos="0 0 -0.40">
+                <joint name="left_ankle_pitch" type="hinge" axis="0 1 0" range="-0.9 0.9" damping="2.0"/>
+                <joint name="left_ankle_roll" type="hinge" axis="1 0 0" range="-0.5 0.5" damping="2.0"/>
+                <!-- Contact sole enabled (contype=1 conaffinity=1) -->
+                <geom name="left_foot_sole" type="box" size="0.13 0.068 0.02" pos="0.035 0 -0.025" mass="1.80"
+                      contype="1" conaffinity="1" condim="4" friction="1.4 0.015 0.002" material="mat_titanium"/>
+                <site name="left_foot_contact" pos="0.035 0 -0.045"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+
+      <!-- Right Leg (6-DoF, Class Gamma Actuators: 10.80 kg total) -->
+      <body name="right_hip_yaw" pos="0 -0.105 -0.08">
+        <joint name="right_hip_yaw" type="hinge" axis="0 0 1" range="-1.2 1.2" damping="2.5"/>
+        <geom type="cylinder" size="0.052 0.03" mass="1.10" material="mat_cyan"/>
+
+        <body name="right_hip_roll" pos="0 0 -0.04">
+          <joint name="right_hip_roll" type="hinge" axis="1 0 0" range="-0.4 0.6" damping="3.0"/>
+          <geom type="cylinder" size="0.052 0.03" mass="1.30" material="mat_titanium"/>
+
+          <body name="right_thigh" pos="0 0 0">
+            <joint name="right_hip_pitch" type="hinge" axis="0 1 0" range="-1.8 1.2" damping="3.5"/>
+            <geom type="capsule" fromto="0 0 0 0 0 -0.40" size="0.048" mass="3.80" material="mat_carbon"/>
+
+            <body name="right_shank" pos="0 0 -0.40">
+              <joint name="right_knee" type="hinge" axis="0 1 0" range="0.0 2.5" damping="3.5"/>
+              <geom type="capsule" fromto="0 0 0 0 0 -0.40" size="0.042" mass="2.80" material="mat_carbon"/>
+
+              <body name="right_ankle" pos="0 0 -0.40">
+                <joint name="right_ankle_pitch" type="hinge" axis="0 1 0" range="-0.9 0.9" damping="2.0"/>
+                <joint name="right_ankle_roll" type="hinge" axis="1 0 0" range="-0.5 0.5" damping="2.0"/>
+                <!-- Contact sole enabled (contype=1 conaffinity=1) -->
+                <geom name="right_foot_sole" type="box" size="0.13 0.068 0.02" pos="0.035 0 -0.025" mass="1.80"
+                      contype="1" conaffinity="1" condim="4" friction="1.4 0.015 0.002" material="mat_titanium"/>
+                <site name="right_foot_contact" pos="0.035 0 -0.045"/>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+
+    </body>
+  </worldbody>
+
+  <!-- Actuator Transmissions (Class Alpha, Beta, Gamma) -->
+  <actuator>
+    <!-- Neck -->
+    <motor name="act_neck_yaw" joint="neck_yaw_joint" ctrlrange="-35 35"/>
+    <motor name="act_neck_pitch" joint="neck_pitch_joint" ctrlrange="-35 35"/>
+
+    <!-- Torso -->
+    <motor name="act_torso_yaw" joint="torso_yaw_joint" ctrlrange="-220 220"/>
+    <motor name="act_torso_pitch" joint="torso_pitch_joint" ctrlrange="-350 350"/>
+    <motor name="act_torso_roll" joint="torso_roll_joint" ctrlrange="-220 220"/>
+
+    <!-- Left Leg (Class Gamma Actuators: Peak 510 Nm) -->
+    <motor name="act_left_hip_yaw" joint="left_hip_yaw" ctrlrange="-240 240"/>
+    <motor name="act_left_hip_roll" joint="left_hip_roll" ctrlrange="-350 350"/>
+    <motor name="act_left_hip_pitch" joint="left_hip_pitch" ctrlrange="-510 510"/>
+    <motor name="act_left_knee" joint="left_knee" ctrlrange="-510 510"/>
+    <motor name="act_left_ankle_pitch" joint="left_ankle_pitch" ctrlrange="-220 220"/>
+    <motor name="act_left_ankle_roll" joint="left_ankle_roll" ctrlrange="-180 180"/>
+
+    <!-- Right Leg (Class Gamma Actuators: Peak 510 Nm) -->
+    <motor name="act_right_hip_yaw" joint="right_hip_yaw" ctrlrange="-240 240"/>
+    <motor name="act_right_hip_roll" joint="right_hip_roll" ctrlrange="-350 350"/>
+    <motor name="act_right_hip_pitch" joint="right_hip_pitch" ctrlrange="-510 510"/>
+    <motor name="act_right_knee" joint="right_knee" ctrlrange="-510 510"/>
+    <motor name="act_right_ankle_pitch" joint="right_ankle_pitch" ctrlrange="-220 220"/>
+    <motor name="act_right_ankle_roll" joint="right_ankle_roll" ctrlrange="-180 180"/>
+
+    <!-- Arms (Class Beta & Alpha) -->
+    <motor name="act_left_shoulder_pitch" joint="left_shoulder_pitch" ctrlrange="-220 220"/>
+    <motor name="act_left_shoulder_roll" joint="left_shoulder_roll" ctrlrange="-220 220"/>
+    <motor name="act_left_shoulder_yaw" joint="left_shoulder_yaw" ctrlrange="-140 140"/>
+    <motor name="act_left_elbow" joint="left_elbow" ctrlrange="-180 180"/>
+    <motor name="act_left_wrist_pitch" joint="left_wrist_pitch" ctrlrange="-55 55"/>
+    <motor name="act_left_wrist_roll" joint="left_wrist_roll" ctrlrange="-55 55"/>
+
+    <motor name="act_right_shoulder_pitch" joint="right_shoulder_pitch" ctrlrange="-220 220"/>
+    <motor name="act_right_shoulder_roll" joint="right_shoulder_roll" ctrlrange="-220 220"/>
+    <motor name="act_right_shoulder_yaw" joint="right_shoulder_yaw" ctrlrange="-140 140"/>
+    <motor name="act_right_elbow" joint="right_elbow" ctrlrange="-180 180"/>
+    <motor name="act_right_wrist_pitch" joint="right_wrist_pitch" ctrlrange="-55 55"/>
+    <motor name="act_right_wrist_roll" joint="right_wrist_roll" ctrlrange="-55 55"/>
+  </actuator>
+
+  <sensor>
+    <accelerometer name="pelvis_accel" site="imu_site"/>
+    <gyro name="pelvis_gyro" site="imu_site"/>
+    <touch name="left_foot_touch" site="left_foot_contact"/>
+    <touch name="right_foot_touch" site="right_foot_contact"/>
+  </sensor>
+</mujoco>

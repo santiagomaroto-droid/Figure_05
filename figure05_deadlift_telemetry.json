@@ -1,0 +1,23 @@
+{
+    "engine": "MuJoCo 3.6.0",
+    "skyhook_force_n": 0.0,
+    "robot_mass_kg": 54.5,
+    "steel_crate_mass_kg": 45.0,
+    "combined_system_mass_kg": 99.5,
+    "crate_vertical_lift_m": 0.381,
+    "steady_floor_grf_n": 975.7,
+    "expected_grf_n": 975.8,
+    "combined_com_range_mm": [
+        -63.2,
+        -0.4
+    ],
+    "min_sole_stability_margin_mm": 66.8,
+    "peak_pitch_deg": 4.34,
+    "steady_pitch_deg": -0.98,
+    "peak_knee_torque_nm": 146.9,
+    "peak_hip_pitch_torque_nm": 147.2,
+    "peak_torso_pitch_torque_nm": 111.5,
+    "peak_shoulder_pitch_torque_nm": 32.8,
+    "peak_elbow_torque_nm": 33.2,
+    "within_all_actuator_limits": true
+}

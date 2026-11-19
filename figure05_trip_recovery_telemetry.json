@@ -1,0 +1,41 @@
+{
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "zero_oracle_controller": true,
+  "cleat_center_x_m": 0.58,
+  "cleat_height_mm": 45.0,
+  "ab_baseline_tripped": {
+    "survived": false,
+    "fall_time_s": 2.906,
+    "cleared_obstacle_cleat": false,
+    "distance_walked_m": 0.645,
+    "final_com_x_m": 0.663,
+    "duration_s": 2.9,
+    "reflex_triggers": 0,
+    "trigger_times_s": [],
+    "peak_vault_clearance_mm": 33.3,
+    "roll_rms_deg": 4.6,
+    "pitch_rms_deg": 8.18,
+    "peak_knee_torque_nm": 167.0,
+    "skyhook_max_n": 0.0
+  },
+  "adaptive_elevating_reflex": {
+    "survived": true,
+    "fall_time_s": null,
+    "cleared_obstacle_cleat": true,
+    "distance_walked_m": 1.995,
+    "final_com_x_m": 2.013,
+    "duration_s": 7.19,
+    "reflex_triggers": 2,
+    "trigger_times_s": [
+      2.434,
+      2.756
+    ],
+    "peak_vault_clearance_mm": 61.5,
+    "roll_rms_deg": 5.08,
+    "pitch_rms_deg": 3.12,
+    "peak_knee_torque_nm": 119.4,
+    "skyhook_max_n": 0.0
+  },
+  "status": "PASS"
+}

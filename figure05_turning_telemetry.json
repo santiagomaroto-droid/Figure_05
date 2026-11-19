@@ -1,0 +1,19 @@
+{
+  "module": "simulate_turning_walk_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 7.998,
+  "path_length_m": 2.459,
+  "end_x_m": 1.381,
+  "end_y_m": 1.354,
+  "target_yaw_deg": 100.0,
+  "final_yaw_deg": 100.53,
+  "yaw_tracking_rms_deg": 1.21,
+  "roll_rms_deg": 3.44,
+  "pitch_rms_deg": 3.53,
+  "peak_left_grf_n": 941.9,
+  "peak_right_grf_n": 1073.5,
+  "peak_knee_torque_nm": 133.6,
+  "completed_without_fall": true,
+  "achieved_90deg_turn": true
+}

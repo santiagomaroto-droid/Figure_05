@@ -1,0 +1,16 @@
+{
+    "safety_standard": "ISO 13482:2014 & ISO/TS 15066:2016",
+    "collision_approach_speed_m_s": 0.42,
+    "rigid_baseline_peak_force_n": 987.6,
+    "rigid_baseline_energy_j": 4.797,
+    "figure05_peak_contact_force_n": 56.9,
+    "figure05_impact_energy_j": 0.0052,
+    "causal_observer_sto_delay_ms": 1.5,
+    "iso15066_chest_limit_n": 140.0,
+    "bus_protocol": "FSRP v3.2 / IEEE 802.3bp 1000BASE-T1 + 802.1AS-Rev",
+    "bus_nodes": 56,
+    "max_gptp_jitter_ns": 29.7,
+    "pam3_auto_heal_failover_us": 3.8,
+    "max_bus_cycle_during_cut_us": 6.02,
+    "dropped_10khz_frames_during_cut": 0
+}

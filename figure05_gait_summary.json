@@ -1,0 +1,13 @@
+{
+    "controller_type": "Kajita DARE LQR ZMP Preview Control + 3D Leg IK",
+    "stride_length_m": 0.5,
+    "cadence_steps_per_min": 115.4,
+    "sustained_velocity_m_s": 0.85,
+    "max_zmp_tracking_error_mm": 28.02,
+    "min_zmp_stability_margin_mm": 40.0,
+    "peak_ik_hip_pitch_deg": 55.2,
+    "peak_ik_knee_flexion_deg": 82.8,
+    "peak_ik_ankle_pitch_deg": 55.2,
+    "peak_ik_knee_speed_rad_s": 7.02,
+    "foot_ground_clearance_mm": 65.0
+}

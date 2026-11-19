@@ -1,0 +1,13 @@
+{
+    "audit_status": "ALL_DIGITAL_TWIN_ARTIFACTS_COHERENT",
+    "release_version": "13.0.0",
+    "mujoco_runtime_version": "3.6.0",
+    "checked_versioned_files": 10,
+    "mujoco_mass_kg": 54.5,
+    "urdf_mass_kg": 54.5,
+    "mass_discrepancy_kg": 0.0,
+    "stl_total_triangles": 35212,
+    "skyhook_verified_zero_across_all_mujoco_runs": true,
+    "verified_bom_50k_usd": 17878.0,
+    "verified_json_reports": 27
+}

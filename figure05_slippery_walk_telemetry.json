@@ -1,0 +1,44 @@
+{
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "zero_oracle_controller": true,
+  "oil_patch_x_range_m": [
+    0.55,
+    1.55
+  ],
+  "mu_dry": 1.2,
+  "mu_oil": 0.18,
+  "ab_baseline_unmitigated": {
+    "survived": false,
+    "fall_time_s": 3.422,
+    "cleared_oil_patch": false,
+    "distance_walked_m": 0.907,
+    "final_com_x_m": 0.924,
+    "duration_s": 3.42,
+    "roll_rms_deg": 5.93,
+    "pitch_rms_deg": 2.96,
+    "min_mu_hat_detected": 1.0,
+    "final_mu_hat": 1.0,
+    "max_stance_slip_mps": 2.883,
+    "slip_detection_ticks": 327,
+    "peak_knee_torque_nm": 175.5,
+    "skyhook_max_n": 0.0
+  },
+  "adaptive_blind_friction_cone": {
+    "survived": true,
+    "fall_time_s": null,
+    "cleared_oil_patch": true,
+    "distance_walked_m": 2.081,
+    "final_com_x_m": 2.099,
+    "duration_s": 9.99,
+    "roll_rms_deg": 3.61,
+    "pitch_rms_deg": 2.11,
+    "min_mu_hat_detected": 0.16,
+    "final_mu_hat": 0.45,
+    "max_stance_slip_mps": 1.007,
+    "slip_detection_ticks": 717,
+    "peak_knee_torque_nm": 510.0,
+    "skyhook_max_n": 0.0
+  },
+  "status": "PASS"
+}

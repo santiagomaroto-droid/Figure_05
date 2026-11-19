@@ -1,0 +1,19 @@
+{
+    "engine": "MuJoCo 3.6.0",
+    "controller": "Englsberger DCM Capture Point + Centroidal WBC + J_sw^T Impedance",
+    "skyhook_force_n": 0.0,
+    "robot_mass_kg": 54.5,
+    "duration_s": 8.0,
+    "step_period_s": 0.44,
+    "double_support_ratio": 0.2,
+    "distance_walked_m": 2.438,
+    "steady_state_speed_m_s": 0.349,
+    "steady_state_rms_roll_deg": 4.19,
+    "steady_state_rms_pitch_deg": 2.36,
+    "mid_stride_push_n": 70.0,
+    "peak_roll_post_push_deg": 13.26,
+    "max_foot_clearance_cm": 5.8,
+    "peak_knee_torque_nm": 142.9,
+    "min_pelvis_height_m": 0.893,
+    "completed_without_fall": true
+}

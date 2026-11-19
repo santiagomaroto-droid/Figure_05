@@ -1,0 +1,3617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIGURE 05 // NOVA-X Apex Humanoid Dossier</title>
+    <style>
+        :root {
+            --bg-dark: #06080D;
+            --panel-bg: rgba(10, 14, 22, 0.72);
+            --panel-border: rgba(255, 255, 255, 0.09);
+            --panel-border-hi: rgba(125, 211, 252, 0.36);
+            --cyan-accent: #67E8F9;
+            --sky-accent: #38BDF8;
+            --orange-accent: #F59E0B;
+            --green-accent: #10B981;
+            --red-alert: #F43F5E;
+            --purple-accent: #A855F7;
+            --text-main: #F8FAFC;
+            --text-dim: #94A3B8;
+            --surface-soft: rgba(255, 255, 255, 0.04);
+            --surface-hover: rgba(255, 255, 255, 0.09);
+            --surface-deep: rgba(0, 0, 0, 0.28);
+        }
+
+        body.studio-light {
+            --bg-dark: #DFE5EE;
+            --panel-bg: rgba(248, 250, 252, 0.78);
+            --panel-border: rgba(15, 23, 42, 0.11);
+            --panel-border-hi: rgba(2, 132, 199, 0.45);
+            --cyan-accent: #0284C7;
+            --sky-accent: #0284C7;
+            --text-main: #0F172A;
+            --text-dim: #475569;
+            --surface-soft: rgba(15, 23, 42, 0.045);
+            --surface-hover: rgba(15, 23, 42, 0.09);
+            --surface-deep: rgba(15, 23, 42, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+            transition: background-color 0.4s ease, color 0.3s ease;
+        }
+
+        #canvas-container {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            background: linear-gradient(180deg, rgba(6, 8, 13, 0.76) 0%, rgba(6, 8, 13, 0) 100%);
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+
+        body.studio-light header {
+            background: linear-gradient(180deg, rgba(223, 229, 238, 0.85) 0%, rgba(223, 229, 238, 0) 100%);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            pointer-events: auto;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .brand-tag {
+            font-size: 9.5px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            color: var(--cyan-accent);
+            border: 1px solid var(--panel-border);
+            letter-spacing: 1.4px;
+            backdrop-filter: blur(12px);
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            pointer-events: auto;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--text-dim);
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            font-family: "SF Mono", Consolas, monospace;
+        }
+
+        .hud-left,
+        .hud-right {
+            position: absolute;
+            top: 66px;
+            max-height: calc(100vh - 134px);
+            overflow-y: auto;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 14px;
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            z-index: 10;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.34);
+            transition: opacity 0.35s ease, transform 0.35s ease, background 0.3s ease;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(148, 163, 184, 0.25) transparent;
+        }
+
+        .hud-left {
+            left: 20px;
+            width: 256px;
+        }
+
+        .hud-right {
+            right: 20px;
+            width: 274px;
+        }
+
+        body.hud-hidden .hud-left {
+            opacity: 0;
+            transform: translateX(-28px);
+            pointer-events: none;
+        }
+
+        body.hud-hidden .hud-right {
+            opacity: 0;
+            transform: translateX(28px);
+            pointer-events: none;
+        }
+
+        body.hud-hidden .header-stats {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .panel-heading {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.6px;
+            color: var(--text-main);
+            margin-bottom: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 5px;
+        }
+
+        .mode-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .btn-mode {
+            background: var(--surface-soft);
+            border: 1px solid var(--panel-border);
+            color: var(--text-dim);
+            padding: 6.5px 6px;
+            font-size: 9.5px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.35px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .btn-mode::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: var(--dot, #64748B);
+            opacity: 0.72;
+        }
+
+        .btn-mode:hover {
+            background: var(--surface-hover);
+            border-color: var(--panel-border-hi);
+            color: var(--text-main);
+        }
+
+        .btn-mode.active {
+            background: rgba(56, 189, 248, 0.16);
+            border-color: var(--panel-border-hi);
+            color: var(--text-main);
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.18);
+        }
+
+        .btn-mode.active::before {
+            opacity: 1;
+            box-shadow: 0 0 6px var(--dot, #67E8F9);
+        }
+
+        .slider-group {
+            margin-bottom: 8px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            color: var(--text-dim);
+            margin-bottom: 3px;
+        }
+
+        .kin-slider {
+            width: 100%;
+            height: 3px;
+            background: var(--panel-border);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .kin-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--cyan-accent);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(103, 232, 249, 0.65);
+        }
+
+        .telemetry-row {
+            margin-bottom: 7.5px;
+        }
+
+        .telemetry-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            font-size: 9.5px;
+            color: var(--text-dim);
+            margin-bottom: 3px;
+        }
+
+        .telemetry-bar-bg {
+            height: 4px;
+            background: var(--surface-soft);
+            border-radius: 99px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .telemetry-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--sky-accent), var(--cyan-accent));
+            border-radius: 99px;
+            transition: width 0.3s ease;
+        }
+
+        .telemetry-bar-fill.warm {
+            background: linear-gradient(90deg, #F59E0B, #EF4444);
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 2px;
+            background: var(--surface-deep);
+            padding: 3px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 5px 3px;
+            background: none;
+            border: none;
+            border-radius: 7px;
+            color: var(--text-dim);
+            font-size: 9.5px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.18s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--text-main);
+            background: var(--surface-hover);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .hand-sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-top: 8px;
+            padding: 6px;
+            background: var(--surface-deep);
+            border-radius: 8px;
+        }
+
+        .sensor-node {
+            height: 22px;
+            border-radius: 5px;
+            background: rgba(56, 189, 248, 0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7.5px;
+            font-weight: 600;
+            color: var(--cyan-accent);
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            transition: background 0.2s ease;
+        }
+
+        .bottom-dock-wrap {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 12;
+            max-width: calc(100vw - 32px);
+        }
+
+        .bottom-deck {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 999px;
+            padding: 4px 8px;
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+        }
+
+        .deck-divider {
+            width: 1px;
+            height: 16px;
+            background: var(--panel-border);
+            margin: 0 3px;
+        }
+
+        .deck-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            font-size: 9.5px;
+            font-weight: 600;
+            letter-spacing: 0.65px;
+            padding: 5.5px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border-radius: 999px;
+            transition: all 0.18s ease;
+            white-space: nowrap;
+        }
+
+        .deck-btn:hover {
+            color: var(--text-main);
+            background: var(--surface-hover);
+        }
+
+        .deck-btn.highlight {
+            color: var(--cyan-accent);
+            background: rgba(56, 189, 248, 0.14);
+            border-color: var(--panel-border-hi);
+        }
+
+        .swatch {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-container">
+            <span class="brand-title">FIGURE 05</span>
+            <span class="brand-tag">NOVA-X // SANTIAGO MAROTO // v13.0.0 VERIFIED</span>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <span class="stat-label">Mass Target</span>
+                <span class="stat-value">54.5 kg</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Shift Runtime</span>
+                <span class="stat-value">8.5 hrs (2.2 kWh)</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">MuJoCo 3.6 WBC</span>
+                <span class="stat-value">120N Skyhook-Free (0.66s)</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Factory BOM at 50k</span>
+                <span class="stat-value">$17,878 USD</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Left HUD: Kinematics & Controls -->
+    <div class="hud-left">
+        <div class="panel-heading">
+            <span>Operating Modes</span>
+            <span style="font-size: 8.5px; color: var(--green-accent);">1 kHz RT-WBC</span>
+        </div>
+        <div class="mode-btn-group">
+            <button class="btn-mode active" id="btn-stance" style="--dot: #67E8F9;">Nominal Stance</button>
+            <button class="btn-mode" id="btn-exploded" style="--dot: #CBD5E1;">Exploded CAD</button>
+            <button class="btn-mode" id="btn-deadlift" style="--dot: #F59E0B;">45kg Deadlift</button>
+            <button class="btn-mode" id="btn-sprint" style="--dot: #38BDF8;">0.85 m/s Gait</button>
+            <button class="btn-mode" id="btn-bmw" style="--dot: #38BDF8;">BMW Workcell</button>
+            <button class="btn-mode" id="btn-stairs" style="--dot: #10B981;">±140mm Stairs</button>
+            <button class="btn-mode" id="btn-cart" style="--dot: #38BDF8;">65kg Cart Push</button>
+            <button class="btn-mode" id="btn-oil" style="--dot: #F59E0B;">μ=0.18 Oil Slip</button>
+            <button class="btn-mode" id="btn-trip" style="--dot: #F43F5E;">45mm Trip Vault</button>
+            <button class="btn-mode" id="btn-sidestep" style="--dot: #10B981;">±Y Shuttle</button>
+            <button class="btn-mode" id="btn-thermal" style="--dot: #EC4899;">Thermal Map</button>
+            <button class="btn-mode" id="btn-actuator" style="--dot: #F59E0B;">18:1 Cutaway</button>
+            <button class="btn-mode" id="btn-pushstep" style="--dot: #A855F7;">360° Push-Step</button>
+            <button class="btn-mode" id="btn-door" style="--dot: #F97316;">Fire-Door Pass</button>
+            <button class="btn-mode" id="btn-uneven" style="--dot: #10B981;">Canted Terrain</button>
+            <button class="btn-mode" id="btn-gantry" style="--dot: #FBBF24;">1.41m Gantry</button>
+        </div>
+
+        <div class="panel-heading" style="margin-top: 8px;">
+            <span>Joint Poses</span>
+            <span style="font-size: 8px; color: var(--cyan-accent);">True Hierarchy</span>
+        </div>
+        <div class="slider-group">
+            <div class="slider-label"><span>Torso Pitch</span><span id="txt-torso-pitch">0°</span></div>
+            <input type="range" class="kin-slider" id="slider-torso" min="-25" max="55" value="0">
+        </div>
+        <div class="slider-group">
+            <div class="slider-label"><span>Shoulder Pitch</span><span id="txt-left-arm">0°</span></div>
+            <input type="range" class="kin-slider" id="slider-arm" min="-110" max="60" value="0">
+        </div>
+        <div class="slider-group">
+            <div class="slider-label"><span>Squat / Knee Flex</span><span id="txt-knee">0°</span></div>
+            <input type="range" class="kin-slider" id="slider-knee" min="0" max="90" value="0">
+        </div>
+
+        <div class="panel-heading" style="margin-top: 10px;">
+            <span>Actuator Telemetry</span>
+            <span style="font-size: 8.5px; color: var(--cyan-accent);">800V GaN</span>
+        </div>
+        <div class="telemetry-row">
+            <div class="telemetry-header">
+                <span>Class Gamma Hip</span>
+                <span id="val-hip-torque">46.4 Nm (120N Shock)</span>
+            </div>
+            <div class="telemetry-bar-bg">
+                <div class="telemetry-bar-fill" id="bar-hip-torque" style="width: 18%;"></div>
+            </div>
+        </div>
+        <div class="telemetry-row">
+            <div class="telemetry-header">
+                <span>Class Gamma Knee</span>
+                <span id="val-knee-torque">163.3 Nm (Peak Analyt.)</span>
+            </div>
+            <div class="telemetry-bar-bg">
+                <div class="telemetry-bar-fill" id="bar-knee-torque" style="width: 32%;"></div>
+            </div>
+        </div>
+        <div class="telemetry-row">
+            <div class="telemetry-header">
+                <span>Stator Winding</span>
+                <span id="val-temp-core">83.2°C / 180°C</span>
+            </div>
+            <div class="telemetry-bar-bg">
+                <div class="telemetry-bar-fill warm" id="bar-temp-core" style="width: 46%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right HUD: Multi-Tab Engineering Matrix -->
+    <div class="hud-right">
+        <div class="tab-bar">
+            <button class="tab-btn active" id="tab-btn-sim">MuJoCo 3.6</button>
+            <button class="tab-btn" id="tab-btn-gait">Gait</button>
+            <button class="tab-btn" id="tab-btn-bom">BOM</button>
+            <button class="tab-btn" id="tab-btn-neural">Neural</button>
+        </div>
+
+        <!-- TAB 1: MuJoCo Physics & AGMA Gear Verification -->
+        <div class="tab-content active" id="tab-content-sim">
+            <div class="panel-heading">
+                <span>Skyhook-Free WBC</span>
+                <span style="font-size: 8px; color: var(--green-accent);">VERIFIED</span>
+            </div>
+            <div style="font-size: 10px; color: var(--text-dim); line-height: 1.35; margin-bottom: 8px;">
+                Pure foot-ground reaction control in MuJoCo 3.6 (54.5 kg) rejecting 120 N lateral shock:
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Walk / 45kg Deadlift</span><span style="color: var(--green-accent); font-weight:700;">2.44 m | +38.1 cm</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 86%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>120 N Chest Shock</span><span style="color: var(--cyan-accent); font-weight:700;">9.98° -> 0.66 s</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 28%; background: var(--cyan-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>±140mm Stairs + Regen</span><span style="color: var(--green-accent); font-weight:700;">2.39/2.37m (206.5J)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 97%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>15kg Carry | +100.5°</span><span style="color: var(--cyan-accent); font-weight:700;">+1.27 m | 2.46 m</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 95%; background: var(--cyan-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Oil Slip (μ=0.18 Blind)</span><span style="color: var(--green-accent); font-weight:700;">2.08 m PASS</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 96%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>65 kg Cart Push</span><span style="color: var(--cyan-accent); font-weight:700;">+1.31 m (119.5 kg)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 94%; background: var(--cyan-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>45 mm Trip Vault</span><span style="color: var(--green-accent); font-weight:700;">2.00 m (61.5mm Z)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 95%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>±Y Shuttle + 65 N</span><span style="color: var(--cyan-accent); font-weight:700;">1.41 m (0.53° Yaw)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 93%; background: var(--cyan-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>360° DCM Push (36.3 N·s)</span><span style="color: #C084FC; font-weight:700;">4/4 PASS (67 ms)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 100%; background: #A855F7;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Spring Fire-Door</span><span style="color: #FB923C; font-weight:700;">1.87 m (92°->1.6°)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 97%; background: #F97316;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Canted Terrain (±10.4°)</span><span style="color: #34D399; font-weight:700;">2.93 m (139.9 Nm)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 98%; background: #10B981;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>1.41m Gantry Duck</span><span style="color: #FBBF24; font-weight:700;">2.25 m (0 N Hit)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 100%; background: #F59E0B;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>96-World Sim2Real DR</span><span style="color: var(--green-accent); font-weight:700;">97.9% (1.64° RMS)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 98%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>AGMA 9310 Gear SF</span><span style="color: var(--orange-accent); font-weight:700;">1.89 C / 4.62 B</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 78%; background: var(--orange-accent);"></div></div>
+            </div>
+            <div style="margin-top: 6px; padding: 7px 8px; background: var(--surface-deep); border-radius: 8px; font-size: 9.5px; color: var(--text-dim);">
+                Bearing L10h: <span style="color: var(--green-accent); font-weight:700;">273,514 hrs</span> | 800V GaN: <span style="color: var(--cyan-accent); font-weight:700;">95.24%</span>
+            </div>
+        </div>
+
+        <!-- TAB 2: Gait & Tactile Manipulation -->
+        <div class="tab-content" id="tab-content-gait">
+            <div class="panel-heading">
+                <span>Kajita Gait & Tactile</span>
+                <span style="font-size: 8px; color: var(--cyan-accent);">DARE LQR</span>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Sustained C² Stride</span><span style="color: var(--cyan-accent); font-weight:700;">0.85 m/s (115.4 spm)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 65%;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Min ZMP Margin</span><span style="color: var(--green-accent); font-weight:700;">40.0 mm (28mm Err)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 85%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>Swing Clearance</span><span style="color: var(--purple-accent); font-weight:700;">65 mm (Min-Jerk)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 55%; background: var(--purple-accent);"></div></div>
+            </div>
+            <div style="margin-top: 10px; padding: 9px; background: var(--surface-deep); border-radius: 8px;">
+                <div style="font-size: 8.5px; color: var(--text-dim); letter-spacing: 0.8px;">CAUSAL GELSKIN SLIP REFLEX</div>
+                <div style="font-size: 10.5px; font-weight: 600; color: var(--text-main); margin-top: 3px;">
+                    Slip arrested at <span style="color: var(--green-accent);">0.26 mm</span> under oil + 1.5g jerk (Open-loop: 3,854 mm)
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Factory BOM & Scaling -->
+        <div class="tab-content" id="tab-content-bom">
+            <div class="panel-heading">
+                <span>Unit Cost vs Scale</span>
+                <span style="font-size: 8px; color: var(--cyan-accent);">DFA METRICS</span>
+            </div>
+            <div class="slider-group" style="margin-bottom: 10px;">
+                <div class="slider-label"><span>Volume</span><span id="txt-bom-vol" style="font-weight:700; color:var(--cyan-accent);">50,000 units/yr</span></div>
+                <input type="range" class="kin-slider" id="slider-bom" min="1000" max="50000" step="1000" value="50000">
+            </div>
+            <div style="padding: 10px; background: var(--surface-deep); border-radius: 10px; margin-bottom: 10px;">
+                <div style="font-size: 9px; color: var(--text-dim); letter-spacing: 0.8px;">ESTIMATED UNIT BOM COST</div>
+                <div style="font-size: 20px; font-weight: 800; color: var(--green-accent); font-family: monospace;" id="txt-bom-cost">$17,878 USD</div>
+                <div style="font-size: 9.5px; color: var(--cyan-accent); margin-top: 3px;">42% fastener reduction + unibody casting</div>
+            </div>
+            <div style="font-size: 9.5px; color: var(--text-dim); line-height: 1.45;">
+                • Actuators: $8,760 (12 Gamma + 16 Beta + 8 Alpha)<br>
+                • Structural Castings & Fairings: $2,510<br>
+                • Structural Battery & 800V PDU: $2,200<br>
+                • Dual Thor Compute & Sensors: $4,098<br>
+                • 1000BASE-T1 SPE Harnessing: $310
+            </div>
+        </div>
+
+        <!-- TAB 4: Neural & Tactile -->
+        <div class="tab-content" id="tab-content-neural">
+            <div class="panel-heading">
+                <span>Dual Thor Neural</span>
+                <span style="font-size: 8px; color: var(--purple-accent);">FP8 QUANT</span>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>50 Hz VLA Roofline</span><span style="color: var(--cyan-accent); font-weight:700;">7.35 ms (p99 7.75)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 39%;"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>1 kHz WBC RTOS</span><span style="color: var(--green-accent); font-weight:700;">781.9 µs (p99 956.5)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 78%; background: var(--green-accent);"></div></div>
+            </div>
+            <div class="telemetry-row">
+                <div class="telemetry-header"><span>GelSkin Slip Reflex</span><span style="color: #EC4899; font-weight:700;">1.75 ms (&lt; 2 ms)</span></div>
+                <div class="telemetry-bar-bg"><div class="telemetry-bar-fill" style="width: 87%; background: #EC4899;"></div></div>
+            </div>
+            <div class="hand-sensor-grid">
+                <div class="sensor-node" id="sn-1">THUMB</div>
+                <div class="sensor-node" id="sn-2">INDEX</div>
+                <div class="sensor-node" id="sn-3">MID</div>
+                <div class="sensor-node" id="sn-4">RING</div>
+                <div class="sensor-node" id="sn-5">PINKY</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Controls: Showroom Finish, Camera & Telemetry Controls -->
+    <div class="bottom-dock-wrap">
+        <div class="bottom-deck">
+            <button class="deck-btn highlight" id="btn-finish-pearl"><span class="swatch" style="background:#EEF2F7;"></span>Pearl</button>
+            <button class="deck-btn" id="btn-finish-stealth"><span class="swatch" style="background:#181D27;"></span>Stealth</button>
+            <button class="deck-btn" id="btn-finish-chrome"><span class="swatch" style="background:linear-gradient(135deg,#FFFFFF,#7D8A9C);"></span>Chrome</button>
+            <div class="deck-divider"></div>
+            <button class="deck-btn" id="btn-studio-toggle">Studio: Noir</button>
+        </div>
+
+        <div class="bottom-deck">
+            <button class="deck-btn highlight" id="btn-auto-rotate">Auto-Orbit: ON</button>
+            <button class="deck-btn" id="btn-safety">ISO 15066: OFF</button>
+            <button class="deck-btn" id="btn-wireframe">X-Ray</button>
+            <button class="deck-btn" id="btn-reset-cam">Reset</button>
+            <button class="deck-btn" id="btn-toggle-hud">Showcase</button>
+        </div>
+
+        <div class="bottom-deck">
+            <button class="deck-btn highlight" id="btn-cam-hero">Hero</button>
+            <button class="deck-btn" id="btn-cam-head">Head</button>
+            <button class="deck-btn" id="btn-cam-side">Side</button>
+            <button class="deck-btn" id="btn-cam-back">Back</button>
+            <button class="deck-btn" id="btn-cam-feet">Feet</button>
+        </div>
+    </div>
+
+    <script>
+        // --- THREE.JS SCENE SETUP (GEN-16 // FIGURE 05 "NOVA-X" ARCHITECTURAL MONOCOQUE) ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050609, 0.062);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlView = urlParams.get('view') || 'hero';
+        const urlFinish = urlParams.get('finish') || 'pearl';
+        const urlStudio = urlParams.get('studio') || 'noir';
+        if (urlParams.get('hud') === '0') {
+            document.body.classList.add('hud-hidden');
+        }
+
+        const camera = new THREE.PerspectiveCamera(34, window.innerWidth / window.innerHeight, 0.05, 100);
+        const viewPresets = {
+            hero: { pos: [1.54, 1.05, 2.88], tgt: [0, 0.87, 0] },
+            head: { pos: [0.30, 1.62, 0.56], tgt: [0, 1.56, 0.015] },
+            side: { pos: [3.05, 0.94, 0.18], tgt: [0, 0.86, 0] },
+            back: { pos: [-1.42, 1.08, -2.70], tgt: [0, 0.87, 0] },
+            feet: { pos: [0.56, 0.28, 0.84], tgt: [0, 0.17, 0.05] }
+        };
+        const preset = viewPresets[urlView] || viewPresets.hero;
+        camera.position.set(...preset.pos);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.08;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.physicallyCorrectLights = false;
+        container.appendChild(renderer.domElement);
+
+        // --- LUXURY AUTOMOTIVE LIGHT-TUNNEL EQUIRECTANGULAR STUDIO HDRI (1024x512) ---
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        const hdriCache = {};
+
+        function buildStudioHDRI(isLight) {
+            if (hdriCache[isLight ? 'lab' : 'noir']) return hdriCache[isLight ? 'lab' : 'noir'];
+            const w = 1024, h = 512;
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+
+            const bg = ctx.createLinearGradient(0, 0, 0, h);
+            if (isLight) {
+                bg.addColorStop(0.00, '#FFFFFF');
+                bg.addColorStop(0.32, '#E5E9F0');
+                bg.addColorStop(0.52, '#CBD5E1');
+                bg.addColorStop(0.75, '#94A3B8');
+                bg.addColorStop(1.00, '#64748B');
+            } else {
+                bg.addColorStop(0.00, '#1C222D');
+                bg.addColorStop(0.22, '#0E121A');
+                bg.addColorStop(0.48, '#06080C');
+                bg.addColorStop(0.72, '#030407');
+                bg.addColorStop(1.00, '#010204');
+            }
+            ctx.fillStyle = bg;
+            ctx.fillRect(0, 0, w, h);
+
+            function drawSoftbox(cx, cy, rx, ry, innerCol, midCol, outerCol, alpha = 1.0) {
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.translate(cx, cy);
+                ctx.scale(1, ry / rx);
+                const g = ctx.createRadialGradient(0, 0, rx * 0.04, 0, 0, rx);
+                g.addColorStop(0.00, innerCol);
+                g.addColorStop(0.42, midCol);
+                g.addColorStop(1.00, outerCol);
+                ctx.fillStyle = g;
+                ctx.beginPath();
+                ctx.arc(0, 0, rx, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Overhead continuous light-bank arch (carves silky clearcoat roll-off across shoulders/pectorals/thighs)
+            drawSoftbox(w * 0.50, h * 0.08, 360, 48, '#FFFFFF', isLight ? 'rgba(255,255,255,0.78)' : 'rgba(240,245,255,0.68)', 'rgba(0,0,0,0)', 1.0);
+            // Warm neutral-ivory key softbox front-right
+            drawSoftbox(w * 0.68, h * 0.36, 108, 175, '#FFFDF9', 'rgba(255,248,238,0.62)', 'rgba(0,0,0,0)', 0.96);
+            // Cool platinum-cyan kicker strip left-rear (razor rim highlights)
+            drawSoftbox(w * 0.22, h * 0.39, 54, 180, '#F0FCFF', 'rgba(125,211,252,0.52)', 'rgba(0,0,0,0)', isLight ? 0.45 : 0.92);
+            // Secondary pure-white studio rim right-rear
+            drawSoftbox(w * 0.88, h * 0.38, 56, 170, '#FFFFFF', 'rgba(232,240,252,0.56)', 'rgba(0,0,0,0)', 0.92);
+            // Subtle champagne-bronze lower fill bounce
+            drawSoftbox(w * 0.62, h * 0.55, 115, 52, '#FFEAD0', 'rgba(220,165,105,0.36)', 'rgba(0,0,0,0)', isLight ? 0.28 : 0.54);
+
+            // Sharp curved automotive reflection blades (renders mirror-obsidian facemask & titanium chamfers like Octane)
+            ctx.save();
+            const sg = ctx.createLinearGradient(0, h * 0.14, 0, h * 0.58);
+            sg.addColorStop(0.0, 'rgba(255,255,255,0)');
+            sg.addColorStop(0.22, 'rgba(255,255,255,0.96)');
+            sg.addColorStop(0.78, 'rgba(235,245,255,0.92)');
+            sg.addColorStop(1.0, 'rgba(255,255,255,0)');
+            ctx.fillStyle = sg;
+            ctx.fillRect(w * 0.674, h * 0.14, 16, h * 0.44);
+            ctx.fillRect(w * 0.218, h * 0.18, 11, h * 0.38);
+            ctx.fillRect(w * 0.876, h * 0.16, 12, h * 0.40);
+            ctx.restore();
+
+            const eqTex = new THREE.CanvasTexture(c);
+            eqTex.mapping = THREE.EquirectangularReflectionMapping;
+            eqTex.encoding = THREE.sRGBEncoding;
+            const rt = pmremGenerator.fromEquirectangular(eqTex);
+            eqTex.dispose();
+            hdriCache[isLight ? 'lab' : 'noir'] = rt.texture;
+            return rt.texture;
+        }
+        scene.environment = buildStudioHDRI(urlStudio === 'lab');
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxPolarAngle = Math.PI / 2 + 0.03;
+        controls.minDistance = 0.40;
+        controls.maxDistance = 6.5;
+        controls.target.set(...preset.tgt);
+
+        // --- ARCHITECTURAL DARK GALLERY CYCLORAMA BACKDROP SHADER (NO FLAT BLUE CAD VOID) ---
+        const backdropUniforms = {
+            uTop: { value: new THREE.Color(0x040508) },
+            uMid: { value: new THREE.Color(0x0D111A) },
+            uBot: { value: new THREE.Color(0x020305) },
+            uHalo: { value: new THREE.Color(0x1E2E46) },
+            uHaloStr: { value: 0.48 }
+        };
+        const backdropDome = new THREE.Mesh(
+            new THREE.SphereGeometry(28, 48, 32),
+            new THREE.ShaderMaterial({
+                side: THREE.BackSide,
+                depthWrite: false,
+                uniforms: backdropUniforms,
+                vertexShader: `
+                    varying vec3 vWorldPos;
+                    void main() {
+                        vec4 wp = modelMatrix * vec4(position, 1.0);
+                        vWorldPos = wp.xyz;
+                        gl_Position = projectionMatrix * viewMatrix * wp;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uTop;
+                    uniform vec3 uMid;
+                    uniform vec3 uBot;
+                    uniform vec3 uHalo;
+                    uniform float uHaloStr;
+                    varying vec3 vWorldPos;
+                    void main() {
+                        vec3 d = normalize(vWorldPos);
+                        float h = d.y;
+                        vec3 col = mix(uBot, uMid, smoothstep(-0.18, 0.16, h));
+                        col = mix(col, uTop, smoothstep(0.16, 0.72, h));
+                        float horizonBand = exp(-pow((h - 0.06) * 4.0, 2.0));
+                        col += uHalo * horizonBand * uHaloStr;
+                        gl_FragColor = vec4(col, 1.0);
+                    }
+                `
+            })
+        );
+        scene.add(backdropDome);
+
+        // --- SCULPTURAL 3-POINT KEYNOTE PHOTOGRAPHY LIGHTING + VOLUMETRIC OVERHEAD CONE ---
+        const hemiLight = new THREE.HemisphereLight(0xDCE4F0, 0x050609, 0.30);
+        scene.add(hemiLight);
+
+        const keyLight = new THREE.DirectionalLight(0xFFFDF8, 1.58);
+        keyLight.position.set(2.9, 5.2, 3.6);
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.width = 2048;
+        keyLight.shadow.mapSize.height = 2048;
+        keyLight.shadow.camera.near = 0.5;
+        keyLight.shadow.camera.far = 14;
+        keyLight.shadow.camera.left = -2.2;
+        keyLight.shadow.camera.right = 2.2;
+        keyLight.shadow.camera.top = 2.6;
+        keyLight.shadow.camera.bottom = -1.4;
+        keyLight.shadow.bias = -0.00026;
+        scene.add(keyLight);
+
+        const rimLightL = new THREE.DirectionalLight(0x7DD3FC, 1.25);
+        rimLightL.position.set(-4.2, 3.5, -3.2);
+        scene.add(rimLightL);
+
+        const rimLightR = new THREE.DirectionalLight(0xFFFFFF, 1.68);
+        rimLightR.position.set(3.8, 3.6, -3.5);
+        scene.add(rimLightR);
+
+        const warmAccentLight = new THREE.DirectionalLight(0xFDE6C4, 0.36);
+        warmAccentLight.position.set(3.2, 1.2, 2.8);
+        scene.add(warmAccentLight);
+
+        const fillLight = new THREE.DirectionalLight(0xC2D0E2, 0.32);
+        fillLight.position.set(-2.8, 1.6, 3.4);
+        scene.add(fillLight);
+
+        const volBeamUniforms = {
+            uColor: { value: new THREE.Color(0xBAE6FD) },
+            uStrength: { value: 0.068 }
+        };
+        const volBeam = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.16, 0.92, 3.8, 48, 1, true),
+            new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                uniforms: volBeamUniforms,
+                vertexShader: `
+                    varying vec2 vUv;
+                    varying vec3 vNormalV;
+                    varying vec3 vViewDir;
+                    void main() {
+                        vUv = uv;
+                        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+                        vNormalV = normalize(normalMatrix * normal);
+                        vViewDir = normalize(-mv.xyz);
+                        gl_Position = projectionMatrix * mv;
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uColor;
+                    uniform float uStrength;
+                    varying vec2 vUv;
+                    varying vec3 vNormalV;
+                    varying vec3 vViewDir;
+                    void main() {
+                        float edge = pow(abs(dot(vNormalV, vViewDir)), 1.75);
+                        float fade = smoothstep(0.0, 0.30, vUv.y) * smoothstep(1.0, 0.72, vUv.y);
+                        float alpha = edge * fade * uStrength;
+                        gl_FragColor = vec4(uColor, alpha);
+                    }
+                `
+            })
+        );
+        volBeam.position.set(0, 1.92, 0);
+        scene.add(volBeam);
+
+        // --- INFINITY GALLERY TURNTABLE STAGE ---
+        const floorShaderUniforms = {
+            uInnerColor: { value: new THREE.Color(0x0D1522) },
+            uOuterColor: { value: new THREE.Color(0x020305) },
+            uAlphaScale: { value: 0.94 }
+        };
+        const stageFloorMat = new THREE.ShaderMaterial({
+            transparent: true,
+            depthWrite: false,
+            uniforms: floorShaderUniforms,
+            vertexShader: `
+                varying vec2 vLocalPos;
+                void main() {
+                    vLocalPos = position.xy;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 uInnerColor;
+                uniform vec3 uOuterColor;
+                uniform float uAlphaScale;
+                varying vec2 vLocalPos;
+                void main() {
+                    float r = length(vLocalPos);
+                    float spot = exp(-r * r * 0.52);
+                    float alpha = smoothstep(3.6, 0.55, r) * uAlphaScale;
+                    vec3 col = mix(uOuterColor, uInnerColor, spot);
+                    gl_FragColor = vec4(col, alpha * spot);
+                }
+            `
+        });
+        const stageFloor = new THREE.Mesh(new THREE.CircleGeometry(4.0, 72), stageFloorMat);
+        stageFloor.rotation.x = -Math.PI / 2;
+        stageFloor.position.y = -0.020;
+        stageFloor.receiveShadow = false;
+        scene.add(stageFloor);
+
+        const plinthOuterMat = new THREE.MeshStandardMaterial({ color: 0x090C12, roughness: 0.72, metalness: 0.18, envMapIntensity: 0.08 });
+        const stagePlinthBase = new THREE.Mesh(new THREE.CylinderGeometry(0.60, 0.67, 0.014, 96), plinthOuterMat);
+        stagePlinthBase.position.y = -0.013;
+        stagePlinthBase.receiveShadow = true;
+        scene.add(stagePlinthBase);
+
+        const plinthTopMat = new THREE.MeshPhysicalMaterial({ color: 0x05070B, roughness: 0.40, metalness: 0.24, clearcoat: 0.42, clearcoatRoughness: 0.22, envMapIntensity: 0.14 });
+        const stagePlinth = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.565, 0.008, 96), plinthTopMat);
+        stagePlinth.position.y = -0.004;
+        stagePlinth.receiveShadow = true;
+        scene.add(stagePlinth);
+
+        const plinthLip = new THREE.Mesh(
+            new THREE.TorusGeometry(0.554, 0.0028, 12, 96),
+            new THREE.MeshStandardMaterial({ color: 0x9CA8B8, roughness: 0.22, metalness: 0.92, envMapIntensity: 0.45 })
+        );
+        plinthLip.rotation.x = Math.PI / 2;
+        plinthLip.position.y = 0.0005;
+        scene.add(plinthLip);
+
+        const coveGlowUniforms = {
+            uColor: { value: new THREE.Color(0x38BDF8) },
+            uOpacity: { value: 0.56 }
+        };
+        const coveGlowRing = new THREE.Mesh(
+            new THREE.RingGeometry(0.50, 1.10, 96),
+            new THREE.ShaderMaterial({
+                transparent: true,
+                depthWrite: false,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                uniforms: coveGlowUniforms,
+                vertexShader: `
+                    varying vec2 vPos;
+                    void main() {
+                        vPos = position.xy;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                    }
+                `,
+                fragmentShader: `
+                    uniform vec3 uColor;
+                    uniform float uOpacity;
+                    varying vec2 vPos;
+                    void main() {
+                        float r = length(vPos);
+                        float core = exp(-pow((r - 0.574) / 0.013, 2.0)) * 1.12;
+                        float bloom = exp(-pow((r - 0.62) / 0.18, 2.0)) * 0.34;
+                        float alpha = clamp((core + bloom) * uOpacity, 0.0, 0.90);
+                        gl_FragColor = vec4(uColor, alpha);
+                    }
+                `
+            })
+        );
+        coveGlowRing.rotation.x = -Math.PI / 2;
+        coveGlowRing.position.y = -0.015;
+        scene.add(coveGlowRing);
+
+        const shadowCanvas = document.createElement('canvas');
+        shadowCanvas.width = 256; shadowCanvas.height = 256;
+        const sctx = shadowCanvas.getContext('2d');
+        const sgGrad = sctx.createRadialGradient(128, 128, 14, 128, 128, 124);
+        sgGrad.addColorStop(0.0, 'rgba(0,0,0,0.80)');
+        sgGrad.addColorStop(0.55, 'rgba(0,0,0,0.36)');
+        sgGrad.addColorStop(1.0, 'rgba(0,0,0,0.0)');
+        sctx.fillStyle = sgGrad;
+        sctx.fillRect(0, 0, 256, 256);
+        const contactShadow = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.60, 0.52),
+            new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false, opacity: 0.80 })
+        );
+        contactShadow.rotation.x = -Math.PI / 2;
+        contactShadow.position.set(0, 0.0005, 0.02);
+        scene.add(contactShadow);
+
+        const stageRotatorRing = new THREE.Group();
+        stageRotatorRing.position.y = 0.0008;
+        for (let t = 0; t < 36; t++) {
+            const ang = (t / 36) * Math.PI * 2;
+            const isMajor = (t % 9 === 0);
+            const tick = new THREE.Mesh(
+                new THREE.BoxGeometry(isMajor ? 0.022 : 0.007, 0.0008, 0.0016),
+                new THREE.MeshBasicMaterial({ color: isMajor ? 0x67E8F9 : 0x64748B, transparent: true, opacity: isMajor ? 0.56 : 0.20 })
+            );
+            tick.position.set(Math.cos(ang) * 0.49, 0, Math.sin(ang) * 0.49);
+            tick.rotation.y = -ang;
+            stageRotatorRing.add(tick);
+        }
+        scene.add(stageRotatorRing);
+
+        const outerHoloRing = new THREE.Group();
+        outerHoloRing.position.y = -0.016;
+        for (let s = 0; s < 4; s++) {
+            const arc = new THREE.Mesh(
+                new THREE.RingGeometry(0.715, 0.720, 36, 1, s * Math.PI * 0.5 + 0.24, Math.PI * 0.26),
+                new THREE.MeshBasicMaterial({ color: 0x38BDF8, side: THREE.DoubleSide, transparent: true, opacity: 0.24 })
+            );
+            arc.rotation.x = -Math.PI / 2;
+            outerHoloRing.add(arc);
+        }
+        scene.add(outerHoloRing);
+
+        const pCount = 40;
+        const pPos = new Float32Array(pCount * 3);
+        for (let i = 0; i < pCount; i++) {
+            const rad = 0.72 + Math.random() * 1.55;
+            const ang = Math.random() * Math.PI * 2;
+            pPos[i * 3] = Math.cos(ang) * rad;
+            pPos[i * 3 + 1] = 0.14 + Math.random() * 1.95;
+            pPos[i * 3 + 2] = Math.sin(ang) * rad;
+        }
+        const pGeom = new THREE.BufferGeometry();
+        pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+        const ambientParticles = new THREE.Points(
+            pGeom,
+            new THREE.PointsMaterial({ color: 0xBAE6FD, size: 0.0072, transparent: true, opacity: 0.20, blending: THREE.AdditiveBlending, depthWrite: false })
+        );
+        scene.add(ambientParticles);
+
+        // --- ISO 15066 SAFETY PERIMETER RINGS ---
+        const safetyGroup = new THREE.Group();
+        safetyGroup.position.y = 0.01;
+        safetyGroup.visible = false;
+        scene.add(safetyGroup);
+
+        const innerRing = new THREE.Mesh(
+            new THREE.RingGeometry(0.60, 0.65, 48),
+            new THREE.MeshBasicMaterial({ color: 0xEF4444, side: THREE.DoubleSide, transparent: true, opacity: 0.85 })
+        );
+        innerRing.rotation.x = Math.PI / 2;
+        safetyGroup.add(innerRing);
+
+        const outerRing = new THREE.Mesh(
+            new THREE.RingGeometry(1.95, 2.0, 64),
+            new THREE.MeshBasicMaterial({ color: 0x38BDF8, side: THREE.DoubleSide, transparent: true, opacity: 0.65 })
+        );
+        outerRing.rotation.x = Math.PI / 2;
+        safetyGroup.add(outerRing);
+
+        // --- HIGH-RES 1024PX ARCHITECTURAL COMPOSITE & TITANIUM PBR MAPS ---
+        function makeTexCanvas(size, drawFn, repeatX = 1, repeatY = 1, isColor = false) {
+            const c = document.createElement('canvas');
+            c.width = size; c.height = size;
+            drawFn(c.getContext('2d'), size);
+            const t = new THREE.CanvasTexture(c);
+            t.wrapS = THREE.RepeatWrapping;
+            t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set(repeatX, repeatY);
+            t.anisotropy = 4;
+            if (isColor) t.encoding = THREE.sRGBEncoding;
+            return t;
+        }
+
+        // Porcelain-Pearl Aerospace Monocoque Panel Map (architectural warm pearl gradients + precision shut-lines!)
+        const armorAlbedoTex = makeTexCanvas(1024, (ctx, s) => {
+            const g = ctx.createLinearGradient(0, 0, s, s);
+            g.addColorStop(0.0, '#F0EDE8');
+            g.addColorStop(0.55, '#E4E2DE');
+            g.addColorStop(1.0, '#D4D3D0');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, s, s);
+
+            // Subtle machined chamfer dark margin
+            ctx.strokeStyle = 'rgba(30, 35, 42, 0.14)';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(14, 14, s - 28, s - 28);
+
+            // Clean diagonal aerospace shut-lines
+            ctx.strokeStyle = 'rgba(20, 24, 30, 0.24)';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.36); ctx.lineTo(s * 0.44, s * 0.36); ctx.lineTo(s * 0.60, s * 0.50); ctx.lineTo(s, s * 0.50);
+            ctx.stroke();
+
+            ctx.strokeStyle = 'rgba(55, 65, 81, 0.16)';
+            ctx.lineWidth = 1.8;
+            ctx.beginPath();
+            ctx.moveTo(s * 0.26, 0); ctx.lineTo(s * 0.26, s * 0.36);
+            ctx.moveTo(s * 0.76, s * 0.50); ctx.lineTo(s * 0.76, s);
+            ctx.stroke();
+
+            // Countersunk micro-fastener dots at shut-line intersections
+            [[44, 44], [s - 44, 44], [44, s - 44], [s - 44, s - 44], [s * 0.43, s * 0.33], [s * 0.62, s * 0.53]].forEach(([fx, fy]) => {
+                ctx.fillStyle = 'rgba(25, 30, 38, 0.30)';
+                ctx.beginPath(); ctx.arc(fx, fy, 4.2, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.50)';
+                ctx.beginPath(); ctx.arc(fx - 1, fy - 1, 1.8, 0, Math.PI * 2); ctx.fill();
+            });
+
+            // Subtle micro-cooling gills
+            ctx.fillStyle = 'rgba(20, 24, 30, 0.24)';
+            for (let k = 0; k < 4; k++) {
+                ctx.fillRect(s * 0.66, s * (0.14 + k * 0.030), s * 0.20, 5.0);
+            }
+        }, 1, 1, true);
+
+        const armorBumpTex = makeTexCanvas(1024, (ctx, s) => {
+            ctx.fillStyle = '#888888';
+            ctx.fillRect(0, 0, s, s);
+            ctx.strokeStyle = '#383838';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(14, 14, s - 28, s - 28);
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.36); ctx.lineTo(s * 0.44, s * 0.36); ctx.lineTo(s * 0.60, s * 0.50); ctx.lineTo(s, s * 0.50);
+            ctx.stroke();
+            ctx.fillStyle = '#323232';
+            for (let k = 0; k < 4; k++) {
+                ctx.fillRect(s * 0.66, s * (0.14 + k * 0.030), s * 0.20, 5.0);
+            }
+        }, 1, 1, false);
+
+        const armorRoughTex = makeTexCanvas(512, (ctx, s) => {
+            ctx.fillStyle = '#404040';
+            ctx.fillRect(0, 0, s, s);
+            ctx.strokeStyle = '#989898';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(7, 7, s - 14, s - 14);
+            ctx.beginPath();
+            ctx.moveTo(0, s * 0.36); ctx.lineTo(s * 0.44, s * 0.36); ctx.lineTo(s * 0.60, s * 0.50); ctx.lineTo(s, s * 0.50);
+            ctx.stroke();
+        }, 1, 1, false);
+
+        const fineCarbonBumpTex = makeTexCanvas(256, (ctx, s) => {
+            ctx.fillStyle = '#6C6C6C';
+            ctx.fillRect(0, 0, s, s);
+            const step = 8;
+            for (let y = 0; y < s; y += step) {
+                for (let x = 0; x < s; x += step) {
+                    const idx = ((x / step) + (y / step)) % 4;
+                    ctx.fillStyle = idx < 2 ? '#8A8A8A' : '#585858';
+                    ctx.fillRect(x, y, step - 1, step - 1);
+                }
+            }
+        }, 20, 20, false);
+
+        const fineSatinBumpTex = makeTexCanvas(256, (ctx, s) => {
+            ctx.fillStyle = '#808080';
+            ctx.fillRect(0, 0, s, s);
+            for (let y = 0; y < s; y += 2) {
+                const v = 124 + Math.floor((Math.sin(y * 1.9) + 1) * 3.0);
+                ctx.fillStyle = `rgb(${v},${v},${v})`;
+                ctx.fillRect(0, y, s, 1);
+            }
+        }, 8, 8, false);
+
+        const glowSpriteTex = makeTexCanvas(128, (ctx, s) => {
+            const g = ctx.createRadialGradient(s * 0.5, s * 0.5, 1, s * 0.5, s * 0.5, s * 0.5);
+            g.addColorStop(0.0, 'rgba(224, 248, 255, 0.95)');
+            g.addColorStop(0.32, 'rgba(103, 232, 249, 0.42)');
+            g.addColorStop(0.70, 'rgba(56, 189, 248, 0.08)');
+            g.addColorStop(1.0, 'rgba(2, 132, 199, 0.0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, s, s);
+        }, 1, 1, false);
+
+        function addGlowHalo(parent, x, y, z, scale = 0.08, opacity = 0.45) {
+            const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+                map: glowSpriteTex, color: 0x67E8F9, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false
+            }));
+            sp.position.set(x, y, z);
+            sp.scale.set(scale, scale, 1);
+            parent.add(sp);
+            return sp;
+        }
+
+        // --- GEN-16 INTERLOCKING UNIBODY MATERIALS (WARM SATIN PORCELAIN + TITANIUM-SILVER + JET CARBON) ---
+        const matArmorShell = new THREE.MeshPhysicalMaterial({
+            color: 0xDCDAD4, map: armorAlbedoTex, bumpMap: armorBumpTex, bumpScale: 0.0020,
+            roughnessMap: armorRoughTex, roughness: 0.22, metalness: 0.34,
+            clearcoat: 1.0, clearcoatRoughness: 0.04, envMapIntensity: 1.24
+        });
+        const matArmorAccent = new THREE.MeshPhysicalMaterial({
+            color: 0x9CA4B0, map: armorAlbedoTex, bumpMap: armorBumpTex, bumpScale: 0.0012,
+            roughness: 0.24, metalness: 0.68,
+            clearcoat: 0.72, clearcoatRoughness: 0.09, envMapIntensity: 1.18
+        });
+        const matArmorDark = new THREE.MeshPhysicalMaterial({
+            color: 0x161920, bumpMap: fineSatinBumpTex, bumpScale: 0.0003,
+            roughness: 0.44, metalness: 0.56, clearcoat: 0.24, clearcoatRoughness: 0.26, envMapIntensity: 0.44
+        });
+        // Deep Matte Jet-Obsidian Structural Core (zero washed-out blue-grey!)
+        const matCarbon = new THREE.MeshPhysicalMaterial({
+            color: 0x050608, bumpMap: fineCarbonBumpTex, bumpScale: 0.0009,
+            roughness: 0.82, metalness: 0.08, clearcoat: 0.04, clearcoatRoughness: 0.50, envMapIntensity: 0.08
+        });
+        const matTitanium = new THREE.MeshPhysicalMaterial({
+            color: 0xB8B1A6, bumpMap: fineSatinBumpTex, bumpScale: 0.0002,
+            roughness: 0.19, metalness: 0.95, clearcoat: 0.55, clearcoatRoughness: 0.09, envMapIntensity: 1.28
+        });
+        const matGunmetal = new THREE.MeshPhysicalMaterial({
+            color: 0x262B34, bumpMap: fineSatinBumpTex, bumpScale: 0.0002,
+            roughness: 0.24, metalness: 0.90, clearcoat: 0.40, clearcoatRoughness: 0.12, envMapIntensity: 0.88
+        });
+        const matChrome = new THREE.MeshStandardMaterial({
+            color: 0xEFF4FA, roughness: 0.05, metalness: 0.99, envMapIntensity: 1.40
+        });
+        const matCopperDetail = new THREE.MeshStandardMaterial({
+            color: 0xD69454, roughness: 0.16, metalness: 0.96, envMapIntensity: 1.30
+        });
+        // Flush Mirror Piano-Obsidian Ceramic Faceplate (clean smoked glass optic band inside!)
+        const matFaceGlass = new THREE.MeshPhysicalMaterial({
+            color: 0x030509, roughness: 0.015, metalness: 0.28,
+            clearcoat: 1.0, clearcoatRoughness: 0.01, envMapIntensity: 2.15
+        });
+        const matOpticBandGlass = new THREE.MeshPhysicalMaterial({
+            color: 0x020611, roughness: 0.01, metalness: 0.22,
+            clearcoat: 1.0, clearcoatRoughness: 0.01, envMapIntensity: 2.35,
+            transparent: true, opacity: 0.72, depthWrite: false
+        });
+        const matVisorGlow = new THREE.MeshStandardMaterial({
+            color: 0xECFEFF, emissive: 0x67E8F9, emissiveIntensity: 3.2, roughness: 0.08
+        });
+        const matAmberGlow = new THREE.MeshStandardMaterial({
+            color: 0xFEF3C7, emissive: 0xF59E0B, emissiveIntensity: 2.6, roughness: 0.08
+        });
+        const matElastomer = new THREE.MeshStandardMaterial({
+            color: 0x050608, roughness: 0.92, metalness: 0.04, envMapIntensity: 0.04
+        });
+        const matBatteryMonocoque = new THREE.MeshPhysicalMaterial({
+            color: 0x151B26, roughness: 0.28, metalness: 0.82, clearcoat: 0.45, envMapIntensity: 0.85
+        });
+        const footPearlMats = [];
+
+        const coreShaderUniforms = {
+            uTime: { value: 0.0 },
+            uColorA: { value: new THREE.Color(0xE0FCFF) },
+            uColorB: { value: new THREE.Color(0x0EA5E9) }
+        };
+        const matCoreEnergy = new THREE.ShaderMaterial({
+            transparent: true,
+            uniforms: coreShaderUniforms,
+            vertexShader: `
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                varying vec3 vViewDir;
+                void main() {
+                    vUv = uv;
+                    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+                    vNormal = normalize(normalMatrix * normal);
+                    vViewDir = normalize(-mv.xyz);
+                    gl_Position = projectionMatrix * mv;
+                }
+            `,
+            fragmentShader: `
+                uniform float uTime;
+                uniform vec3 uColorA;
+                uniform vec3 uColorB;
+                varying vec2 vUv;
+                varying vec3 vNormal;
+                varying vec3 vViewDir;
+                void main() {
+                    vec2 p = vUv * 2.0 - 1.0;
+                    float r = length(p);
+                    float ang = atan(p.y, p.x);
+                    float pulse = 0.5 + 0.5 * sin(r * 18.0 - uTime * 3.8);
+                    float spokes = 0.5 + 0.5 * cos(ang * 6.0 + uTime * 1.4);
+                    float fresnel = pow(1.0 - max(0.0, dot(vNormal, vViewDir)), 2.0);
+                    float centerCore = exp(-r * r * 5.8);
+                    float ring = exp(-pow((r - 0.64) * 11.0, 2.0));
+                    vec3 col = mix(uColorB, uColorA, clamp(centerCore + ring * 0.90 + pulse * 0.22, 0.0, 1.0));
+                    col += uColorA * (fresnel * 0.45 + spokes * ring * 0.35);
+                    float alpha = clamp((1.0 - smoothstep(0.84, 1.0, r)) * (0.78 + 0.22 * centerCore), 0.0, 1.0);
+                    gl_FragColor = vec4(col, alpha);
+                }
+            `
+        });
+
+        const allWireframeMats = [matArmorShell, matArmorAccent, matArmorDark, matCarbon, matTitanium, matGunmetal, matFaceGlass, matBatteryMonocoque];
+
+        const matThermalHot = new THREE.MeshStandardMaterial({ color: 0xEF4444, emissive: 0xDC2626, emissiveIntensity: 1.25, roughness: 0.2 });
+        const matThermalWarm = new THREE.MeshStandardMaterial({ color: 0xF59E0B, emissive: 0xD97706, emissiveIntensity: 0.85, roughness: 0.3 });
+        const matThermalCool = new THREE.MeshStandardMaterial({ color: 0x0284C7, emissive: 0x0369A1, emissiveIntensity: 0.45, roughness: 0.4 });
+
+        const thermalPelvisMeshes = [];
+        const thermalChestMeshes = [];
+        const thermalActuatorMeshes = [];
+        function tagThermal(mesh, bucket) {
+            mesh.userData.origMat = mesh.material;
+            bucket.push(mesh);
+            return mesh;
+        }
+
+        // --- LIVE MATERIAL FINISH & STUDIO THEME ENGINE ---
+        let activeFinish = urlFinish;
+        let activeStudio = urlStudio;
+
+        function applyFinish(name) {
+            activeFinish = name;
+            if (name === 'stealth') {
+                matArmorShell.color.setHex(0x1D222B);
+                matArmorShell.map = null;
+                matArmorShell.roughness = 0.26; matArmorShell.metalness = 0.72; matArmorShell.clearcoat = 0.85; matArmorShell.envMapIntensity = 1.28;
+                matArmorAccent.color.setHex(0x2D3544);
+                matArmorAccent.map = null;
+                matArmorAccent.roughness = 0.22; matArmorAccent.metalness = 0.86;
+                matTitanium.color.setHex(0x9BA6B8);
+                matCopperDetail.color.setHex(0xEEA944);
+                matVisorGlow.emissive.setHex(0x00E5FF);
+                coreShaderUniforms.uColorB.value.setHex(0x00C8FF);
+                coveGlowUniforms.uColor.value.setHex(0x00E5FF);
+            } else if (name === 'chrome') {
+                matArmorShell.color.setHex(0xF6F9FE);
+                matArmorShell.map = armorAlbedoTex;
+                matArmorShell.roughness = 0.09; matArmorShell.metalness = 0.90; matArmorShell.clearcoat = 1.0; matArmorShell.envMapIntensity = 2.05;
+                matArmorAccent.color.setHex(0xCFD9E6);
+                matArmorAccent.map = null;
+                matArmorAccent.roughness = 0.14; matArmorAccent.metalness = 0.92; matArmorAccent.envMapIntensity = 1.85;
+                matTitanium.color.setHex(0xD8E1EC);
+                matCopperDetail.color.setHex(0xE2C794);
+                matVisorGlow.emissive.setHex(0x7DD3FC);
+                coreShaderUniforms.uColorB.value.setHex(0x38BDF8);
+                coveGlowUniforms.uColor.value.setHex(0xBAE6FD);
+            } else {
+                matArmorShell.color.setHex(0xDCDAD4);
+                matArmorShell.map = armorAlbedoTex;
+                matArmorShell.roughness = 0.22; matArmorShell.metalness = 0.34; matArmorShell.clearcoat = 1.0; matArmorShell.envMapIntensity = 1.24;
+                matArmorAccent.color.setHex(0x9CA4B0);
+                matArmorAccent.map = armorAlbedoTex;
+                matArmorAccent.roughness = 0.24; matArmorAccent.metalness = 0.68;
+                matTitanium.color.setHex(0xB8B1A6);
+                matCopperDetail.color.setHex(0xD69454);
+                matVisorGlow.emissive.setHex(0x67E8F9);
+                coreShaderUniforms.uColorB.value.setHex(0x0EA5E9);
+                coveGlowUniforms.uColor.value.setHex(0x38BDF8);
+            }
+            footPearlMats.forEach(fm => {
+                fm.color.copy(matArmorShell.color);
+                fm.roughness = (name === 'chrome') ? 0.09 : (name === 'stealth' ? 0.26 : 0.18);
+                fm.metalness = matArmorShell.metalness;
+                fm.envMapIntensity = matArmorShell.envMapIntensity;
+                fm.needsUpdate = true;
+            });
+            matArmorShell.needsUpdate = true;
+            matArmorAccent.needsUpdate = true;
+            matTitanium.needsUpdate = true;
+            ['pearl', 'stealth', 'chrome'].forEach(k => {
+                const el = document.getElementById(`btn-finish-${k}`);
+                if (el) el.classList.toggle('highlight', k === name);
+            });
+        }
+
+        function applyStudio(mode) {
+            activeStudio = mode;
+            const isLight = (mode === 'lab');
+            document.body.classList.toggle('studio-light', isLight);
+            scene.environment = buildStudioHDRI(isLight);
+            if (isLight) {
+                scene.fog.color.setHex(0xDDE5F0);
+                scene.fog.density = 0.024;
+                backdropUniforms.uTop.value.setHex(0xF4F7FB);
+                backdropUniforms.uMid.value.setHex(0xE0E7F1);
+                backdropUniforms.uBot.value.setHex(0xCFD8E4);
+                backdropUniforms.uHalo.value.setHex(0xFFFFFF);
+                backdropUniforms.uHaloStr.value = 0.40;
+                floorShaderUniforms.uInnerColor.value.setHex(0xE2E8F0);
+                floorShaderUniforms.uOuterColor.value.setHex(0xCBD5E1);
+                floorShaderUniforms.uAlphaScale.value = 0.85;
+                plinthOuterMat.color.setHex(0xCBD5E1);
+                plinthTopMat.color.setHex(0xEAEEF5);
+                coveGlowUniforms.uOpacity.value = 0.16;
+                volBeamUniforms.uStrength.value = 0.020;
+                hemiLight.intensity = 0.80;
+                renderer.toneMappingExposure = 1.00;
+            } else {
+                scene.fog.color.setHex(0x050609);
+                scene.fog.density = 0.062;
+                backdropUniforms.uTop.value.setHex(0x040508);
+                backdropUniforms.uMid.value.setHex(0x0D111A);
+                backdropUniforms.uBot.value.setHex(0x020305);
+                backdropUniforms.uHalo.value.setHex(0x1E2E46);
+                backdropUniforms.uHaloStr.value = 0.48;
+                floorShaderUniforms.uInnerColor.value.setHex(0x0D1522);
+                floorShaderUniforms.uOuterColor.value.setHex(0x020305);
+                floorShaderUniforms.uAlphaScale.value = 0.94;
+                plinthOuterMat.color.setHex(0x090C12);
+                plinthTopMat.color.setHex(0x05070B);
+                coveGlowUniforms.uOpacity.value = 0.56;
+                volBeamUniforms.uStrength.value = 0.068;
+                hemiLight.intensity = 0.30;
+                renderer.toneMappingExposure = 1.08;
+            }
+            const btnS = document.getElementById('btn-studio-toggle');
+            if (btnS) btnS.innerText = isLight ? 'Studio: Lab' : 'Studio: Noir';
+        }
+
+        // --- CLASS-A FRITSCH-CARLSON MONOTONE CUBIC SPLINE SURFACE & INTERLOCKING PANEL SCULPTOR ---
+        function compileProfile(rawRings) {
+            const keys = ['y', 'rx', 'rzF', 'rzB', 'cx', 'cz', 'sq', 'crestF', 'crestB', 'bevel', 'pect', 'valley', 'backSwell', 'backValley', 'cheekPinch', 'orbitRecess'];
+            const defaults = { y: 0, rx: 0.05, rzF: 0.05, rzB: 0.05, cx: 0, cz: 0, sq: 2.1, crestF: 0, crestB: 0, bevel: 0, pect: 0, valley: 0, backSwell: 0, backValley: 0, cheekPinch: 0, orbitRecess: 0 };
+            const n = rawRings.length;
+            const series = {}, tangents = {};
+            keys.forEach(k => {
+                const arr = rawRings.map(r => {
+                    if (r[k] !== undefined) return r[k];
+                    if (k === 'rzF') return r.rz !== undefined ? r.rz : (r.rzB !== undefined ? r.rzB : defaults.rzF);
+                    if (k === 'rzB') return r.rz !== undefined ? r.rz : (r.rzF !== undefined ? r.rzF : defaults.rzB);
+                    return defaults[k];
+                });
+                series[k] = arr;
+                const m = new Array(n).fill(0);
+                if (n === 2) m[0] = m[1] = arr[1] - arr[0];
+                else if (n > 2) {
+                    const d = [];
+                    for (let i = 0; i < n - 1; i++) d.push(arr[i + 1] - arr[i]);
+                    m[0] = d[0];
+                    m[n - 1] = d[n - 2];
+                    for (let i = 1; i < n - 1; i++) m[i] = (d[i - 1] * d[i] <= 0) ? 0 : (2 * d[i - 1] * d[i]) / (d[i - 1] + d[i]);
+                }
+                tangents[k] = m;
+            });
+            return { n, series, tangents, keys };
+        }
+
+        function sampleSeries(arr, m, n, v) {
+            if (n === 1) return arr[0];
+            const vc = Math.max(0, Math.min(1, v));
+            const f = vc * (n - 1);
+            const i = Math.min(n - 2, Math.floor(f));
+            const t = f - i, t2 = t * t, t3 = t2 * t;
+            return (2 * t3 - 3 * t2 + 1) * arr[i] + (t3 - 2 * t2 + t) * m[i] + (-2 * t3 + 3 * t2) * arr[i + 1] + (t3 - t2) * m[i + 1];
+        }
+
+        function evalProfilePoint(prof, v, th) {
+            const S = prof.series, M = prof.tangents, n = prof.n;
+            const y = sampleSeries(S.y, M.y, n, v);
+            let rx = Math.max(0.0018, sampleSeries(S.rx, M.rx, n, v));
+            const rzF = Math.max(0.0018, sampleSeries(S.rzF, M.rzF, n, v));
+            const rzB = Math.max(0.0018, sampleSeries(S.rzB, M.rzB, n, v));
+            const cx = sampleSeries(S.cx, M.cx, n, v);
+            const cz = sampleSeries(S.cz, M.cz, n, v);
+            const sq = Math.max(1.4, Math.min(4.5, sampleSeries(S.sq, M.sq, n, v)));
+            const crestF = sampleSeries(S.crestF, M.crestF, n, v);
+            const crestB = sampleSeries(S.crestB, M.crestB, n, v);
+            const bevel = sampleSeries(S.bevel, M.bevel, n, v);
+            const pect = sampleSeries(S.pect, M.pect, n, v);
+            const valley = sampleSeries(S.valley, M.valley, n, v);
+            const backSwell = sampleSeries(S.backSwell, M.backSwell, n, v);
+            const backValley = sampleSeries(S.backValley, M.backValley, n, v);
+            const cheekPinch = sampleSeries(S.cheekPinch, M.cheekPinch, n, v);
+            const orbitRecess = sampleSeries(S.orbitRecess, M.orbitRecess, n, v);
+
+            const st = Math.sin(th), ct = Math.cos(th);
+            const exp = 2.0 / sq;
+            const fb = 0.5 + 0.5 * (ct / Math.sqrt(ct * ct + 0.055));
+            let rz = rzB + (rzF - rzB) * fb;
+
+            if (bevel !== 0) {
+                const diag = Math.pow(Math.abs(st * ct), 0.78);
+                rx *= (1.0 - bevel * diag);
+                rz *= (1.0 - bevel * diag);
+            }
+            if (cheekPinch !== 0 && ct > -0.1) {
+                rx -= cheekPinch * Math.exp(-Math.pow((Math.abs(st) - 0.85) / 0.24, 2)) * (0.4 + 0.6 * Math.max(0, ct));
+            }
+            if (ct > 0) {
+                if (orbitRecess !== 0) rz -= orbitRecess * Math.exp(-Math.pow(st / 0.65, 2)) * Math.pow(ct, 1.3);
+                if (pect !== 0) rz += pect * Math.exp(-Math.pow((Math.abs(st) - 0.50) / 0.30, 2)) * Math.pow(ct, 1.35);
+                if (valley !== 0) rz -= valley * Math.exp(-Math.pow(st / 0.22, 2)) * Math.pow(ct, 1.8);
+                if (crestF !== 0) rz += crestF * Math.pow(ct, 2.8);
+            } else {
+                const act = -ct;
+                if (backSwell !== 0) rz += backSwell * Math.exp(-Math.pow((Math.abs(st) - 0.48) / 0.32, 2)) * Math.pow(act, 1.35);
+                if (backValley !== 0) rz -= backValley * Math.exp(-Math.pow(st / 0.22, 2)) * Math.pow(act, 1.8);
+                if (crestB !== 0) rz += crestB * Math.pow(act, 2.8);
+            }
+            rx = Math.max(0.0018, rx);
+            rz = Math.max(0.0018, rz);
+            const px = cx + rx * (st < 0 ? -1 : 1) * Math.pow(Math.abs(st), exp);
+            const pz = cz + rz * (ct < 0 ? -1 : 1) * Math.pow(Math.abs(ct), exp);
+            return [px, y, pz];
+        }
+
+        function evalProfileFrame(prof, v, th) {
+            const p = evalProfilePoint(prof, v, th);
+            const dTh = 0.012, dV = 0.008;
+            const pu1 = evalProfilePoint(prof, v, th + dTh);
+            const pu0 = evalProfilePoint(prof, v, th - dTh);
+            const pv1 = evalProfilePoint(prof, Math.min(1, v + dV), th);
+            const pv0 = evalProfilePoint(prof, Math.max(0, v - dV), th);
+            const tux = pu1[0] - pu0[0], tuy = pu1[1] - pu0[1], tuz = pu1[2] - pu0[2];
+            const tvx = pv1[0] - pv0[0], tvy = pv1[1] - pv0[1], tvz = pv1[2] - pv0[2];
+            let nx = tuy * tvz - tuz * tvy;
+            let ny = tuz * tvx - tux * tvz;
+            let nz = tux * tvy - tuy * tvx;
+            const len = Math.hypot(nx, ny, nz);
+            if (len > 1e-7) { nx /= len; ny /= len; nz /= len; }
+            else { nx = Math.sin(th); ny = 0; nz = Math.cos(th); }
+            return { p, n: [nx, ny, nz] };
+        }
+
+        function createSmoothLoft(rawRings, material, radialSegs = 44, vSegs = 26, capBot = true, capTop = true) {
+            const prof = Array.isArray(rawRings) ? compileProfile(rawRings) : rawRings;
+            const positions = [], uvs = [], indices = [];
+            const stride = radialSegs + 1;
+
+            for (let i = 0; i <= vSegs; i++) {
+                const v = i / vSegs;
+                for (let j = 0; j <= radialSegs; j++) {
+                    const u = j / radialSegs;
+                    const th = u * Math.PI * 2;
+                    const pt = evalProfilePoint(prof, v, th);
+                    positions.push(pt[0], pt[1], pt[2]);
+                    uvs.push(u, v);
+                }
+            }
+            for (let i = 0; i < vSegs; i++) {
+                for (let j = 0; j < radialSegs; j++) {
+                    const a = i * stride + j, b = a + 1, c = (i + 1) * stride + j, d = c + 1;
+                    indices.push(a, b, d, a, d, c);
+                }
+            }
+            if (capBot) {
+                const bc = positions.length / 3;
+                positions.push(prof.series.cx[0], prof.series.y[0], prof.series.cz[0]);
+                uvs.push(0.5, 0);
+                for (let j = 0; j < radialSegs; j++) indices.push(bc, j + 1, j);
+            }
+            if (capTop) {
+                const topOff = vSegs * stride;
+                const tc = positions.length / 3;
+                const last = prof.n - 1;
+                positions.push(prof.series.cx[last], prof.series.y[last], prof.series.cz[last]);
+                uvs.push(0.5, 1);
+                for (let j = 0; j < radialSegs; j++) indices.push(tc, topOff + j, topOff + j + 1);
+            }
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+            geom.setIndex(indices);
+            geom.computeVertexNormals();
+            const mesh = new THREE.Mesh(geom, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createDiagonalPanel(rawRings, cfg, material) {
+            const prof = Array.isArray(rawRings) ? compileProfile(rawRings) : rawRings;
+            const uSegs = cfg.uSegs || 24;
+            const vSegs = cfg.vSegs || 20;
+            const gap = cfg.gap !== undefined ? cfg.gap : 0.0020;
+            const thick = cfg.thick !== undefined ? cfg.thick : 0.0044;
+            const mirrorX = !!cfg.mirrorX;
+            const ridgeFn = cfg.ridgeFn || null;
+
+            const v0Fn = typeof cfg.v0 === 'function' ? cfg.v0 : () => (cfg.v0 !== undefined ? cfg.v0 : 0.0);
+            const v1Fn = typeof cfg.v1 === 'function' ? cfg.v1 : () => (cfg.v1 !== undefined ? cfg.v1 : 1.0);
+            const phi0Fn = typeof cfg.phi0 === 'function' ? cfg.phi0 : () => cfg.phi0;
+            const phi1Fn = typeof cfg.phi1 === 'function' ? cfg.phi1 : () => cfg.phi1;
+
+            const positions = [], uvs = [], indices = [];
+            const stride = uSegs + 1;
+            const ringStride = stride * 2;
+
+            for (let i = 0; i <= vSegs; i++) {
+                const vn = i / vSegs;
+                const pStart = phi0Fn(vn);
+                const pEnd = phi1Fn(vn);
+                for (let layer = 0; layer < 2; layer++) {
+                    for (let j = 0; j <= uSegs; j++) {
+                        const u = j / uSegs;
+                        const th = pStart + u * (pEnd - pStart);
+                        const vLo = v0Fn(u);
+                        const vHi = v1Fn(u);
+                        const v = Math.max(0.001, Math.min(0.999, vLo + vn * (vHi - vLo)));
+                        const { p, n } = evalProfileFrame(prof, v, th);
+
+                        const eU = Math.min(u, 1.0 - u);
+                        const eV = Math.min(vn, 1.0 - vn);
+                        const edgeRamp = Math.min(1.0, Math.min(eU, eV) / 0.14);
+                        const smoothBevel = edgeRamp * edgeRamp * (3.0 - 2.0 * edgeRamp);
+                        const ridge = (layer === 0 && ridgeFn) ? ridgeFn(u, vn) * smoothBevel : 0.0;
+                        const outDist = layer === 0 ? (gap + thick * (0.18 + 0.82 * smoothBevel) + ridge) : gap;
+
+                        const px = (p[0] + n[0] * outDist) * (mirrorX ? -1 : 1);
+                        const py = p[1] + n[1] * outDist;
+                        const pz = p[2] + n[2] * outDist;
+                        positions.push(px, py, pz);
+                        uvs.push(u, vn);
+                    }
+                }
+            }
+
+            const idx = (i, layer, j) => i * ringStride + layer * stride + j;
+            const pushTri = (a, b, c) => { if (mirrorX) indices.push(a, c, b); else indices.push(a, b, c); };
+            const pushQuad = (a, b, c, d) => { pushTri(a, b, d); pushTri(a, d, c); };
+
+            for (let i = 0; i < vSegs; i++) {
+                for (let j = 0; j < uSegs; j++) {
+                    pushQuad(idx(i, 0, j), idx(i, 0, j + 1), idx(i + 1, 0, j), idx(i + 1, 0, j + 1));
+                    pushQuad(idx(i, 1, j), idx(i + 1, 1, j), idx(i, 1, j + 1), idx(i + 1, 1, j + 1));
+                }
+                pushQuad(idx(i, 0, 0), idx(i + 1, 0, 0), idx(i, 1, 0), idx(i + 1, 1, 0));
+                pushQuad(idx(i, 0, uSegs), idx(i, 1, uSegs), idx(i + 1, 0, uSegs), idx(i + 1, 1, uSegs));
+            }
+            for (let j = 0; j < uSegs; j++) {
+                pushQuad(idx(0, 0, j), idx(0, 1, j), idx(0, 0, j + 1), idx(0, 1, j + 1));
+                pushQuad(idx(vSegs, 0, j), idx(vSegs, 0, j + 1), idx(vSegs, 1, j), idx(vSegs, 1, j + 1));
+            }
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geom.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+            geom.setIndex(indices);
+            geom.computeVertexNormals();
+            const mesh = new THREE.Mesh(geom, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createSurfaceLightStrip(prof, vPhiPairs, offset = 0.004, radius = 0.0017, mat = matVisorGlow, mirrorX = false) {
+            const pts = vPhiPairs.map(([v, phi]) => {
+                const { p, n } = evalProfileFrame(prof, v, phi);
+                return new THREE.Vector3(
+                    (p[0] + n[0] * offset) * (mirrorX ? -1 : 1),
+                    p[1] + n[1] * offset,
+                    p[2] + n[2] * offset
+                );
+            });
+            const curve = new THREE.CatmullRomCurve3(pts);
+            return new THREE.Mesh(new THREE.TubeGeometry(curve, 32, radius, 8, false), mat);
+        }
+
+        function createMuscleTube(points, rStart, rMid, rEnd, material = matCarbon, radialSegs = 14) {
+            const curve = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(p[0], p[1], p[2])));
+            const segs = 22;
+            const frames = curve.computeFrenetFrames(segs, false);
+            const positions = [], indices = [];
+            const stride = radialSegs + 1;
+            for (let i = 0; i <= segs; i++) {
+                const t = i / segs;
+                const pt = curve.getPointAt(t);
+                const omt = 1.0 - t;
+                const r = omt * omt * rStart + 2 * omt * t * rMid + t * t * rEnd;
+                const N = frames.normals[i], B = frames.binormals[i];
+                for (let j = 0; j <= radialSegs; j++) {
+                    const ang = (j / radialSegs) * Math.PI * 2;
+                    const ca = Math.cos(ang), sa = Math.sin(ang);
+                    positions.push(pt.x + r * (ca * N.x + sa * B.x), pt.y + r * (ca * N.y + sa * B.y), pt.z + r * (ca * N.z + sa * B.z));
+                }
+            }
+            for (let i = 0; i < segs; i++) {
+                for (let j = 0; j < radialSegs; j++) {
+                    const a = i * stride + j, b = a + 1, c = (i + 1) * stride + j, d = c + 1;
+                    indices.push(a, b, d, a, d, c);
+                }
+            }
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geom.setIndex(indices);
+            geom.computeVertexNormals();
+            const mesh = new THREE.Mesh(geom, material);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            return mesh;
+        }
+
+        function createStrut(pA, pB, rCyl, rRod, matBody = matGunmetal, matRod = matChrome) {
+            const grp = new THREE.Group();
+            const va = new THREE.Vector3(...pA);
+            const vb = new THREE.Vector3(...pB);
+            const mid = new THREE.Vector3().addVectors(va, vb).multiplyScalar(0.5);
+            const dir = new THREE.Vector3().subVectors(vb, va);
+            const len = dir.length();
+            if (len < 1e-5) return grp;
+            const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+
+            const cyl = new THREE.Mesh(new THREE.CylinderGeometry(rCyl, rCyl * 0.92, len * 0.56, 16), matBody);
+            cyl.position.lerpVectors(va, vb, 0.30);
+            cyl.quaternion.copy(quat);
+            cyl.castShadow = true;
+            grp.add(cyl);
+
+            const collar = new THREE.Mesh(new THREE.CylinderGeometry(rCyl * 1.15, rCyl * 1.15, 0.007, 16), matTitanium);
+            collar.position.lerpVectors(va, vb, 0.56);
+            collar.quaternion.copy(quat);
+            grp.add(collar);
+
+            const rod = new THREE.Mesh(new THREE.CylinderGeometry(rRod, rRod, len * 0.96, 14), matRod);
+            rod.position.copy(mid);
+            rod.quaternion.copy(quat);
+            rod.castShadow = true;
+            grp.add(rod);
+
+            [va, vb].forEach(pt => {
+                const clevis = new THREE.Mesh(new THREE.SphereGeometry(rCyl * 1.05, 12, 12), matTitanium);
+                clevis.position.copy(pt);
+                grp.add(clevis);
+            });
+            return grp;
+        }
+
+        function createActuatorDrum(radius, width, thermalBucket = thermalActuatorMeshes) {
+            const pod = new THREE.Group();
+            const housing = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, width, 32), matGunmetal);
+            housing.rotation.z = Math.PI / 2;
+            housing.castShadow = true;
+            pod.add(housing);
+
+            const stator = tagThermal(
+                new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.032, radius * 1.032, width * 0.18, 32), matCopperDetail),
+                thermalBucket
+            );
+            stator.rotation.z = Math.PI / 2;
+            pod.add(stator);
+
+            [-0.27, 0.27].forEach(off => {
+                const ring = new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.022, radius * 1.022, width * 0.09, 32), matTitanium);
+                ring.rotation.z = Math.PI / 2;
+                ring.position.x = off * width;
+                pod.add(ring);
+            });
+
+            [-1, 1].forEach(s => {
+                const cap = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.62, radius * 0.72, 0.008, 28), matTitanium);
+                cap.rotation.z = Math.PI / 2;
+                cap.position.x = s * (width * 0.5 + 0.002);
+                pod.add(cap);
+                const hub = new THREE.Mesh(new THREE.CylinderGeometry(radius * 0.28, radius * 0.28, 0.011, 20), matArmorDark);
+                hub.rotation.z = Math.PI / 2;
+                hub.position.x = s * (width * 0.5 + 0.003);
+                pod.add(hub);
+            });
+            return pod;
+        }
+
+        // =========================================================================
+        // GEN-16: FIGURE 05 "NOVA-X" — INTERLOCKING UNIBODY AEROSPACE EXOSKELETON
+        // Exact 1.75 m | Sole y=0.000 | Ankle y=0.062 | Knee y=0.475 | Hip y=0.905
+        // =========================================================================
+        const robotRoot = new THREE.Group();
+        scene.add(robotRoot);
+
+        const explodedParts = [];
+        function registerPart(obj, normalPos, explodedPos) {
+            obj.userData.normalPos = normalPos.clone();
+            obj.userData.explodedPos = explodedPos.clone();
+            explodedParts.push(obj);
+        }
+
+        // -------------------------------------------------------------------------
+        // 1. INTEGRATED SCULPTED UNIBODY PELVIS & ARTICULATED GIMBAL CHASSIS
+        // -------------------------------------------------------------------------
+        const pelvis = new THREE.Group();
+        pelvis.position.set(0, 0.905, 0);
+        robotRoot.add(pelvis);
+
+        // Slim sculpted carbon-matte inner pelvis core
+        const pelvisCoreProf = compileProfile([
+            { y: -0.078, rx: 0.032, rzF: 0.056, rzB: 0.062, cz: -0.004, sq: 2.1 },
+            { y: -0.032, rx: 0.088, rzF: 0.078, rzB: 0.088, cz: -0.006, sq: 2.25 },
+            { y:  0.022, rx: 0.132, rzF: 0.086, rzB: 0.096, cz: -0.006, sq: 2.30, backValley: 0.008 },
+            { y:  0.074, rx: 0.128, rzF: 0.082, rzB: 0.086, cz: -0.002, sq: 2.20, valley: 0.005, backValley: 0.009 }
+        ]);
+        pelvis.add(tagThermal(createSmoothLoft(pelvisCoreProf, matCarbon, 44, 20), thermalPelvisMeshes));
+
+        // Central Dark Anodized-Titanium Pelvic Spine Shell (recessed central hinge aesthetic)
+        pelvis.add(createDiagonalPanel(pelvisCoreProf, {
+            v0: 0.08, v1: 0.96,
+            phi0: (vn) => -0.34 - 0.12 * vn,
+            phi1: (vn) =>  0.34 + 0.12 * vn,
+            gap: 0.0022, thick: 0.0050, uSegs: 16, vSegs: 14
+        }, matArmorDark));
+
+        // Bilateral Interlocking Satin-Porcelain & Titanium Iliac Armor Shells (wrap side-to-rear smoothly!)
+        [false, true].forEach(mirrorX => {
+            // Sweeping lateral-anterior hip cowl bridging smoothly into torso waist
+            pelvis.add(createDiagonalPanel(pelvisCoreProf, {
+                v0: (u) => 0.36 + 0.16 * (1 - u),
+                v1: (u) => 0.96,
+                phi0: (vn) => 0.38 - 0.06 * vn,
+                phi1: (vn) => 1.98 + 0.08 * vn,
+                gap: 0.0026, thick: 0.0056, uSegs: 22, vSegs: 16, mirrorX,
+                ridgeFn: (u, vn) => 0.0028 * Math.sin(Math.PI * u) * vn
+            }, matArmorAccent));
+
+            // Posterior gluteal aerodynamic porcelain carapace with crisp spinal split
+            pelvis.add(createDiagonalPanel(pelvisCoreProf, {
+                v0: (u) => 0.12 + 0.18 * (1 - u),
+                v1: (u) => 0.94 - 0.08 * u,
+                phi0: (vn) => 2.02 + 0.08 * vn,
+                phi1: (vn) => Math.PI - 0.14,
+                gap: 0.0026, thick: 0.0056, uSegs: 20, vSegs: 16, mirrorX
+            }, matArmorShell));
+        });
+
+        registerPart(pelvis, new THREE.Vector3(0, 0.905, 0), new THREE.Vector3(0, 0.82, 0));
+
+        // -------------------------------------------------------------------------
+        // 2. SCULPTURAL S-CURVE UNIBODY TORSO (INTERLOCKING 360° AEROSPACE PLATES!)
+        // Genuine Lumbar Lordosis & Thoracic Curve (`cz` shifts smoothly front-to-back!)
+        // -------------------------------------------------------------------------
+        const torsoPivot = new THREE.Group();
+        torsoPivot.position.set(0, 0.975, 0);
+        robotRoot.add(torsoPivot);
+
+        // Note real human S-curve cz: lumbar curves cleanly forward (+0.006 -> +0.016 chest -> -0.008 cervical)!
+        const torsoProf = compileProfile([
+            { y: -0.008, rx: 0.106, rzF: 0.078, rzB: 0.076, cz: -0.004, sq: 2.15 },
+            { y:  0.078, rx: 0.108, rzF: 0.084, rzB: 0.076, cz:  0.006, sq: 2.18, valley: 0.005, backValley: 0.008 },
+            { y:  0.162, rx: 0.136, rzF: 0.104, rzB: 0.088, cz:  0.014, sq: 2.24, valley: 0.008, backValley: 0.012 },
+            { y:  0.252, rx: 0.182, rzF: 0.128, rzB: 0.108, cz:  0.018, sq: 2.30, pect: 0.014, valley: 0.015, backSwell: 0.010, backValley: 0.016 },
+            { y:  0.348, rx: 0.212, rzF: 0.138, rzB: 0.120, cz:  0.012, sq: 2.34, pect: 0.018, valley: 0.020, backSwell: 0.014, backValley: 0.018 },
+            { y:  0.422, rx: 0.194, rzF: 0.114, rzB: 0.110, cz: -0.002, sq: 2.22, pect: 0.008, valley: 0.010, backSwell: 0.008, backValley: 0.012 },
+            { y:  0.470, rx: 0.112, rzF: 0.078, rzB: 0.084, cz: -0.010, sq: 2.08 },
+            { y:  0.498, rx: 0.056, rzF: 0.054, rzB: 0.058, cz: -0.010, sq: 2.00 }
+        ]);
+
+        // Deep Jet-Black Structural Core (recessed underneath 360° interlocking panels -> sharp dark shut-lines!)
+        const torsoCoreMesh = tagThermal(createSmoothLoft(torsoProf, matCarbon, 52, 34), thermalChestMeshes);
+        torsoPivot.add(torsoCoreMesh);
+
+        // Sculpted 5-Ring Interlocking Articulated Titanium-Carbon Bionic Abdominal Chevron Armor
+        for (let ab = 0; ab < 4; ab++) {
+            const vLo = 0.03 + ab * 0.082;
+            torsoPivot.add(createDiagonalPanel(torsoProf, {
+                v0: (u) => vLo + 0.016 * Math.abs(u - 0.5) * 2,
+                v1: (u) => vLo + 0.068 + 0.014 * Math.abs(u - 0.5) * 2,
+                phi0: -0.96, phi1: 0.96,
+                gap: 0.0022, thick: 0.0046, uSegs: 24, vSegs: 8,
+                ridgeFn: (u) => 0.0020 * Math.sin(Math.PI * u)
+            }, matArmorDark));
+        }
+
+        // INTERLOCKING 360° UNIBODY THORAX & BACK SHELLS (Zero "Chest Bib Stickers" — Complete Full-Wrap Form!)
+        [false, true].forEach(mirrorX => {
+            // 1. Broad Swept Porcelain-Ceramic Anterior Pectoral Carapace (wraps around shoulder/lat seam!)
+            const pecShell = createDiagonalPanel(torsoProf, {
+                v0: (u) => 0.42 + 0.14 * Math.pow(u, 1.35) - 0.02 * Math.sin(Math.PI * u),
+                v1: (u) => 0.86 - 0.04 * Math.pow(u, 1.4),
+                phi0: (vn) => 0.18 + 0.12 * Math.sin(Math.PI * vn) + 0.05 * (1 - vn),
+                phi1: (vn) => 1.56 - 0.12 * (1 - vn),
+                gap: 0.0024, thick: 0.0062, uSegs: 28, vSegs: 24, mirrorX,
+                ridgeFn: (u, vn) => {
+                    const d = Math.abs(vn - (0.36 + 0.44 * u));
+                    return 0.0038 * Math.exp(-d * d * 28.0);
+                }
+            }, matArmorShell);
+            torsoPivot.add(tagThermal(pecShell, thermalChestMeshes));
+
+            // 2. Sculpted Titanium-Silver Lateral Ribcage Aero Shell (interlocks cleanly under Pec & beside Spine!)
+            torsoPivot.add(createDiagonalPanel(torsoProf, {
+                v0: (u) => 0.14 + 0.24 * Math.sin(Math.PI * u * 0.65),
+                v1: (u) => 0.50 + 0.18 * (1 - u),
+                phi0: (vn) => 0.98 - 0.08 * vn,
+                phi1: (vn) => Math.PI - 0.92 + 0.10 * vn,
+                gap: 0.0022, thick: 0.0052, uSegs: 22, vSegs: 16, mirrorX,
+                ridgeFn: (u, vn) => 0.0024 * Math.sin(Math.PI * u) * Math.sin(Math.PI * vn)
+            }, matArmorAccent));
+
+            // 3. Sculpted Sweeping Champagne-Titanium Clavicle & Trapezius Collar Bridge
+            torsoPivot.add(createDiagonalPanel(torsoProf, {
+                v0: (u) => 0.875 - 0.024 * u,
+                v1: (u) => 0.970 - 0.018 * u,
+                phi0: (vn) => 0.12 + 0.06 * vn,
+                phi1: (vn) => 1.88 - 0.08 * vn,
+                gap: 0.0026, thick: 0.0052, uSegs: 24, vSegs: 12, mirrorX
+            }, matTitanium));
+
+            // Flush recessed copper intake accent nested neatly under clavicle
+            torsoPivot.add(createSurfaceLightStrip(torsoProf, [
+                [0.866, 0.24], [0.862, 0.52], [0.855, 0.80]
+            ], 0.0040, 0.0014, matCopperDetail, mirrorX));
+
+            // 4. Full-Wrap Winged Porcelain-Ceramic Dorsal Scapular Shell (meets pectoral shell cleanly along side cut!)
+            torsoPivot.add(createDiagonalPanel(torsoProf, {
+                v0: (u) => 0.42 + 0.16 * (1 - u),
+                v1: (u) => 0.89 - 0.03 * (1 - u),
+                phi0: (vn) => 1.58 - 0.10 * (1 - vn),
+                phi1: (vn) => Math.PI - 0.24 - 0.05 * Math.sin(Math.PI * vn),
+                gap: 0.0026, thick: 0.0062, uSegs: 28, vSegs: 22, mirrorX,
+                ridgeFn: (u, vn) => 0.0038 * Math.exp(-Math.pow((u - 0.55) / 0.24, 2)) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            // Lower dorsal latissimus titanium-ceramic winglet
+            torsoPivot.add(createDiagonalPanel(torsoProf, {
+                v0: (u) => 0.14 + 0.16 * (1 - u),
+                v1: (u) => 0.40 + 0.14 * (1 - u),
+                phi0: (vn) => Math.PI - 1.10 + 0.22 * (1 - vn),
+                phi1: (vn) => Math.PI - 0.24,
+                gap: 0.0024, thick: 0.0050, uSegs: 18, vSegs: 14, mirrorX
+            }, matArmorAccent));
+
+            // Dorsal recessed micro copper heatpipes
+            const hpTop = evalProfilePoint(torsoProf, 0.82, Math.PI - 0.18);
+            const hpBot = evalProfilePoint(torsoProf, 0.26, Math.PI - 0.16);
+            torsoPivot.add(createMuscleTube([
+                [hpBot[0] * (mirrorX ? -1 : 1), hpBot[1], hpBot[2] - 0.004],
+                [hpTop[0] * (mirrorX ? -1 : 1), hpTop[1], hpTop[2] - 0.005]
+            ], 0.0040, 0.0042, 0.0040, matCopperDetail, 10));
+        });
+
+        // Exposed CNC Dual-Thor Dorsal Compute Spine Module (9 machined titanium heatsink chevron fins!)
+        const dorsalBay = new THREE.Group();
+        torsoPivot.add(dorsalBay);
+        const spineAnchor = evalProfilePoint(torsoProf, 0.58, Math.PI);
+        const spineHousing = new THREE.Mesh(new THREE.BoxGeometry(0.058, 0.290, 0.020), matArmorDark);
+        spineHousing.position.set(0, spineAnchor[1], spineAnchor[2] + 0.003);
+        dorsalBay.add(spineHousing);
+        for (let k = 0; k < 10; k++) {
+            const finY = spineAnchor[1] - 0.125 + k * 0.028;
+            const fin = new THREE.Mesh(new THREE.BoxGeometry(0.048, 0.011, 0.024), matTitanium);
+            fin.position.set(0, finY, spineAnchor[2]);
+            fin.castShadow = true;
+            dorsalBay.add(fin);
+            if (k % 3 === 1) {
+                const led = new THREE.Mesh(new THREE.BoxGeometry(0.020, 0.0026, 0.026), matVisorGlow);
+                led.position.set(0, finY + 0.013, spineAnchor[2]);
+                dorsalBay.add(led);
+            }
+        }
+
+        // Flush Octagonal Brushed-Titanium Sapphire Sternum Quantum Core
+        const coreCenterPt = evalProfilePoint(torsoProf, 0.675, 0.0);
+        const coreGroup = new THREE.Group();
+        coreGroup.position.set(0, coreCenterPt[1], coreCenterPt[2] + 0.002);
+        torsoPivot.add(coreGroup);
+
+        const hexBezel = new THREE.Mesh(new THREE.TorusGeometry(0.042, 0.0054, 12, 6), matTitanium);
+        hexBezel.rotation.z = Math.PI / 6;
+        coreGroup.add(hexBezel);
+        const hexWell = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.034, 0.014, 6), matArmorDark);
+        hexWell.rotation.x = Math.PI / 2;
+        hexWell.rotation.y = Math.PI / 6;
+        hexWell.position.z = -0.003;
+        coreGroup.add(hexWell);
+
+        const corePlasmaDisc = new THREE.Mesh(new THREE.CircleGeometry(0.034, 6), matCoreEnergy);
+        corePlasmaDisc.rotation.z = Math.PI / 6;
+        corePlasmaDisc.position.z = 0.0038;
+        coreGroup.add(corePlasmaDisc);
+
+        const chestReactorRing = new THREE.Group();
+        chestReactorRing.position.z = 0.0052;
+        chestReactorRing.add(new THREE.Mesh(new THREE.TorusGeometry(0.022, 0.0015, 10, 6), matVisorGlow));
+        for (let v = 0; v < 6; v++) {
+            const ang = (v / 6) * Math.PI * 2;
+            const vane = new THREE.Mesh(new THREE.BoxGeometry(0.009, 0.0019, 0.0020), matCopperDetail);
+            vane.position.set(Math.cos(ang) * 0.029, Math.sin(ang) * 0.029, 0);
+            vane.rotation.z = ang;
+            chestReactorRing.add(vane);
+        }
+        coreGroup.add(chestReactorRing);
+
+        const coreLens = new THREE.Mesh(
+            new THREE.SphereGeometry(0.037, 24, 14, 0, Math.PI * 2, 0, Math.PI * 0.34),
+            new THREE.MeshPhysicalMaterial({ color: 0x050C16, roughness: 0.012, metalness: 0.14, transparent: true, opacity: 0.42, clearcoat: 1.0 })
+        );
+        coreLens.rotation.x = Math.PI / 2;
+        coreLens.position.z = -0.023;
+        coreGroup.add(coreLens);
+
+        addGlowHalo(coreGroup, 0, 0, 0.018, 0.10, 0.28);
+        const corePointLight = new THREE.PointLight(0x67E8F9, 0.50, 0.55);
+        corePointLight.position.set(0, 0, 0.08);
+        coreGroup.add(corePointLight);
+
+        registerPart(torsoPivot, new THREE.Vector3(0, 0.975, 0), new THREE.Vector3(0, 1.12, 0));
+
+        // -------------------------------------------------------------------------
+        // 3. COMPACT MUSCULAR CERVICAL SPINE + SCULPTED AERODYNAMIC COLLAR COWL
+        // (Natural slight forward C-spine cantilever `z: -0.012 -> +0.002` — NO stovepipe!)
+        // -------------------------------------------------------------------------
+        const neckGroup = new THREE.Group();
+        torsoPivot.add(neckGroup);
+
+        const neckCol = createSmoothLoft([
+            { y: 0.464, rx: 0.048, rzF: 0.046, rzB: 0.050, cz: -0.010, sq: 2.0 },
+            { y: 0.500, rx: 0.039, rzF: 0.040, rzB: 0.042, cz: -0.004, sq: 2.0 },
+            { y: 0.532, rx: 0.042, rzF: 0.042, rzB: 0.044, cz:  0.002, sq: 2.0 }
+        ], matCarbon, 32, 16);
+        neckGroup.add(neckCol);
+
+        // Articulated Titanium/Dark-Anodized Cervical Gimbal Bellows Rings (cant forward slightly with spine)
+        [0.478, 0.492, 0.506, 0.520].forEach((ny, idx) => {
+            const czShift = -0.008 + idx * 0.003;
+            const cRing = new THREE.Mesh(
+                new THREE.TorusGeometry(0.040 - (idx % 2) * 0.001, 0.0032, 10, 32),
+                idx === 1 ? matCopperDetail : (idx % 2 === 0 ? matArmorDark : matTitanium)
+            );
+            cRing.rotation.x = Math.PI / 2 - 0.10;
+            cRing.position.set(0, ny, czShift);
+            neckGroup.add(cRing);
+        });
+
+        // Sculpted High Rear Trapezius Collar Shroud hugging neck cleanly at back & sides
+        const collarProf = compileProfile([
+            { y: 0.456, rx: 0.088, rzF: 0.064, rzB: 0.072, cz: -0.010, sq: 2.15 },
+            { y: 0.498, rx: 0.060, rzF: 0.050, rzB: 0.058, cz: -0.008, sq: 2.08 },
+            { y: 0.514, rx: 0.048, rzF: 0.044, rzB: 0.050, cz: -0.005, sq: 2.02 }
+        ]);
+        neckGroup.add(createDiagonalPanel(collarProf, {
+            v0: 0.05, v1: 0.92,
+            phi0: (vn) => 1.10 + 0.35 * vn,
+            phi1: (vn) => Math.PI * 2 - 1.10 - 0.35 * vn,
+            gap: 0.0022, thick: 0.0046, uSegs: 28, vSegs: 12
+        }, matArmorAccent));
+
+        // -------------------------------------------------------------------------
+        // 4. ICONIC FLUSH OBSIDIAN-MIRROR & PORCELAIN MONOLITH HEAD
+        // ZERO bulging fishbowl! ZERO frog circles! ZERO mouth-grille bars!
+        // Pure Tesla Optimus / Figure 03 / Koenigsegg sculptural flush obsidian mask!
+        // -------------------------------------------------------------------------
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 0.518, 0.004);
+        torsoPivot.add(headGroup);
+
+        // Strong chiseled masculine/futuristic skull envelope (high temples, sculpted cheek pinch, crisp angular chin)
+        const headProf = compileProfile([
+            { y: 0.008, rx: 0.024, rzF: 0.046, rzB: 0.022, cz:  0.022, sq: 2.1 },
+            { y: 0.036, rx: 0.048, rzF: 0.078, rzB: 0.052, cz:  0.016, sq: 2.30, crestF: 0.008, cheekPinch: 0.005 },
+            { y: 0.074, rx: 0.064, rzF: 0.094, rzB: 0.076, cz:  0.010, sq: 2.26, bevel: 0.06, cheekPinch: 0.007 },
+            { y: 0.114, rx: 0.075, rzF: 0.100, rzB: 0.094, cz:  0.003, sq: 2.18, bevel: 0.04 },
+            { y: 0.154, rx: 0.076, rzF: 0.095, rzB: 0.104, cz: -0.005, sq: 2.10 },
+            { y: 0.188, rx: 0.062, rzF: 0.072, rzB: 0.088, cz: -0.010, sq: 2.02 },
+            { y: 0.210, rx: 0.035, rzF: 0.042, rzB: 0.048, cz: -0.010, sq: 2.00 },
+            { y: 0.218, rx: 0.005, rzF: 0.006, rzB: 0.007, cz: -0.010, sq: 2.00 }
+        ]);
+
+        // Smooth jet-obsidian mirror monolithic face surface (EXACT contour alignment — ZERO protrusion!)
+        headGroup.add(createSmoothLoft(headProf, matFaceGlass, 52, 32));
+
+        // Concealed Sleek Optical Horizon Sensor Band + Subtle Internal Stereo Micro-Depth Optics (flush along upper face!)
+        const eyeSlotProf = compileProfile([
+            { y: 0.114, rx: 0.072, rzF: 0.096, rzB: 0.080, cz: 0.003, sq: 2.18, bevel: 0.04 },
+            { y: 0.126, rx: 0.074, rzF: 0.098, rzB: 0.080, cz: 0.001, sq: 2.16, bevel: 0.04 },
+            { y: 0.138, rx: 0.074, rzF: 0.096, rzB: 0.080, cz: -0.001, sq: 2.14 }
+        ]);
+        // Sleek Edge-to-Edge Smoked-Graphite Optical Sensor Band flush inside the obsidian facemask
+        const matSensorBand = new THREE.MeshPhysicalMaterial({
+            color: 0x090D14, roughness: 0.06, metalness: 0.84, clearcoat: 1.0, clearcoatRoughness: 0.02, envMapIntensity: 1.85
+        });
+        headGroup.add(createDiagonalPanel(headProf, {
+            v0: (u) => 0.548 + 0.016 * Math.pow(Math.abs(u - 0.5) * 2, 1.4),
+            v1: (u) => 0.602 + 0.014 * Math.pow(Math.abs(u - 0.5) * 2, 1.4),
+            phi0: -0.94, phi1: 0.94,
+            gap: 0.0008, thick: 0.0014, uSegs: 28, vSegs: 6
+        }, matSensorBand));
+
+        // Unbroken razor ice-cyan optical horizon filament centered cleanly along the sensor band
+        const matRazorOptic = new THREE.MeshStandardMaterial({
+            color: 0xCFFAFE, emissive: 0x38BDF8, emissiveIntensity: 2.6, roughness: 0.08
+        });
+        headGroup.add(createSurfaceLightStrip(headProf, [
+            [0.578, -0.56], [0.572, -0.26], [0.568, 0.0], [0.572, 0.26], [0.578, 0.56]
+        ], 0.0034, 0.00095, matRazorOptic, false));
+
+        // Tiny recessed dual stereo IR depth-sensor jewel micro-dots flanking horizon beam
+        [-1, 1].forEach(es => {
+            const ef = evalProfileFrame(headProf, 0.572, es * 0.30);
+            const dot = new THREE.Mesh(new THREE.SphereGeometry(0.0024, 12, 12), matCopperDetail);
+            dot.position.set(ef.p[0] + ef.n[0] * 0.0016, ef.p[1] + ef.n[1] * 0.0016, ef.p[2] + ef.n[2] * 0.0016);
+            headGroup.add(dot);
+        });
+
+        // Subtle animated holographic horizontal scan pulse sweeping smoothly along the concealed optic filament
+        const visorScanDot = new THREE.Sprite(new THREE.SpriteMaterial({
+            map: glowSpriteTex, color: 0x67E8F9, transparent: true, opacity: 0.78, blending: THREE.AdditiveBlending, depthWrite: false
+        }));
+        visorScanDot.scale.set(0.026, 0.011, 1);
+        const initScanF = evalProfileFrame(headProf, 0.566, 0.0);
+        visorScanDot.position.set(initScanF.p[0] + initScanF.n[0] * 0.004, initScanF.p[1] + initScanF.n[1] * 0.004, initScanF.p[2] + initScanF.n[2] * 0.004);
+        headGroup.add(visorScanDot);
+
+        // Full-Wrap Porcelain Ceramic & Champagne-Titanium Cranial Helmet Cowl + Chiseled Jaw Guards
+        [false, true].forEach(mirrorX => {
+            // Side & occipital sculpted porcelain cranial shell
+            headGroup.add(createDiagonalPanel(headProf, {
+                v0: (u) => 0.22 + 0.14 * (1 - u),
+                v1: (u) => 0.96,
+                phi0: (vn) => 0.86 + 0.16 * (1 - vn) - 0.18 * Math.pow(vn, 2.2),
+                phi1: (vn) => Math.PI - 0.055,
+                gap: 0.0020, thick: 0.0052, uSegs: 26, vSegs: 26, mirrorX,
+                ridgeFn: (u, vn) => 0.0022 * Math.exp(-Math.pow((u - 0.22) / 0.18, 2)) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            // Sharp Chiseled Mandible Cheek & Jaw Blade (porcelain framing flush mirror-black chin!)
+            headGroup.add(createDiagonalPanel(headProf, {
+                v0: (u) => 0.07 + 0.14 * u,
+                v1: (u) => 0.26 + 0.16 * u,
+                phi0: (vn) => 0.56 + 0.22 * vn,
+                phi1: (vn) => 1.58 - 0.12 * (1 - vn),
+                gap: 0.0020, thick: 0.0044, uSegs: 18, vSegs: 12, mirrorX
+            }, matArmorShell));
+
+            // Champagne-Titanium Flush Perimeter Frame Rim separating mirror obsidian mask from porcelain shell
+            headGroup.add(createSurfaceLightStrip(headProf, [
+                [0.678, 0.02], [0.696, 0.36], [0.714, 0.72], [0.54, 0.94], [0.28, 0.86]
+            ], 0.0048, 0.0017, matTitanium, mirrorX));
+
+            // Recessed Precision Acoustic Rotary Temple Pod
+            const earPt = evalProfilePoint(headProf, 0.49, Math.PI * 0.52);
+            const sideSign = mirrorX ? -1 : 1;
+            const earPod = new THREE.Group();
+            earPod.position.set(earPt[0] * sideSign + sideSign * 0.001, earPt[1], earPt[2] - 0.006);
+            const earOuter = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.024, 0.008, 28), matTitanium);
+            earOuter.rotation.z = Math.PI / 2;
+            earPod.add(earOuter);
+            const earCore = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.010, 24), matArmorDark);
+            earCore.rotation.z = Math.PI / 2;
+            earPod.add(earCore);
+            const earRing = new THREE.Mesh(new THREE.TorusGeometry(0.015, 0.0014, 8, 28), matCopperDetail);
+            earRing.rotation.y = Math.PI / 2;
+            earRing.position.x = sideSign * 0.004;
+            earPod.add(earRing);
+            headGroup.add(earPod);
+        });
+
+        // Seamless Single-Piece V-Swept Porcelain Forehead Brow Hood (clean aerodynamic sweep!)
+        headGroup.add(createDiagonalPanel(headProf, {
+            v0: (u) => 0.674 + 0.062 * Math.abs(u - 0.5) * 2,
+            v1: (u) => 0.985,
+            phi0: (vn) => -0.96 + 0.12 * vn,
+            phi1: (vn) =>  0.96 - 0.12 * vn,
+            gap: 0.0024, thick: 0.0056, uSegs: 36, vSegs: 16, mirrorX: false,
+            ridgeFn: (u, vn) => 0.0028 * (1.0 - vn) * (1.0 - Math.abs(u - 0.5) * 0.8)
+        }, matArmorShell));
+
+        headGroup.add(createSurfaceLightStrip(headProf, [
+            [0.84, 0.0], [0.95, 0.0], [0.988, Math.PI], [0.85, Math.PI], [0.60, Math.PI], [0.35, Math.PI]
+        ], 0.0072, 0.0018, matTitanium, false));
+
+        registerPart(headGroup, new THREE.Vector3(0, 0.518, 0.004), new THREE.Vector3(0, 0.70, 0.004));
+
+        // -------------------------------------------------------------------------
+        // 5. FULL-WRAP SCULPTURAL SHOULDERS, ATHLETIC ARMS & ARTICULATED 22-DoF HANDS
+        // -------------------------------------------------------------------------
+        const armJoints = [];
+        [-1, 1].forEach(side => {
+            const mirrorX = (side === -1);
+            const shoulderPivot = new THREE.Group();
+            shoulderPivot.position.set(side * 0.214, 0.405, 0.002);
+            torsoPivot.add(shoulderPivot);
+
+            const shDrum = createActuatorDrum(0.036, 0.048, thermalActuatorMeshes);
+            shDrum.position.set(-side * 0.018, -0.008, 0);
+            shoulderPivot.add(shDrum);
+
+            // Muscular Full Athletic Upper-Arm Envelope (+12% fuller bicep & deltoid sweep!)
+            const upperArmProf = compileProfile([
+                { y: -0.282, rx: 0.036, rzF: 0.039, rzB: 0.039, cx:  0.000, sq: 2.08 },
+                { y: -0.210, rx: 0.044, rzF: 0.050, rzB: 0.048, cx:  0.002, sq: 2.15 },
+                { y: -0.125, rx: 0.050, rzF: 0.056, rzB: 0.054, cx:  0.005, sq: 2.20 },
+                { y: -0.042, rx: 0.058, rzF: 0.060, rzB: 0.058, cx:  0.005, sq: 2.18 },
+                { y:  0.016, rx: 0.052, rzF: 0.052, rzB: 0.052, cx:  0.002, sq: 2.10 },
+                { y:  0.046, rx: 0.024, rzF: 0.028, rzB: 0.028, cx: -0.004, sq: 2.00 }
+            ]);
+            const upperArmCarbon = createSmoothLoft(upperArmProf, matCarbon, 36, 22);
+            if (mirrorX) upperArmCarbon.scale.x = -1;
+            shoulderPivot.add(upperArmCarbon);
+
+            // Full-Wrap Sculpted Porcelain Shoulder Pauldron (clean crown over entire top cap)
+            shoulderPivot.add(createDiagonalPanel(upperArmProf, {
+                v0: (u) => 0.62 + 0.10 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.992,
+                phi0: (vn) => -0.34 * vn,
+                phi1: (vn) => Math.PI + 0.34 * vn,
+                gap: 0.0036, thick: 0.0062, uSegs: 28, vSegs: 18, mirrorX,
+                ridgeFn: (u, vn) => 0.0036 * Math.sin(Math.PI * u) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            // Interlocking Full-Wrap Upper-Arm Ceramic & Titanium Shells (Anterior-Lateral + Posterior Counter-Shell!)
+            shoulderPivot.add(createDiagonalPanel(upperArmProf, {
+                v0: (u) => 0.11 + 0.12 * u,
+                v1: (u) => 0.60 - 0.08 * (1 - u),
+                phi0: (vn) => -0.35 - 0.10 * vn,
+                phi1: (vn) => 2.38 + 0.12 * vn,
+                gap: 0.0024, thick: 0.0054, uSegs: 24, vSegs: 16, mirrorX
+            }, matArmorShell));
+
+            shoulderPivot.add(createDiagonalPanel(upperArmProf, {
+                v0: (u) => 0.12 + 0.10 * (1 - u),
+                v1: (u) => 0.58 - 0.08 * u,
+                phi0: (vn) => 2.48 + 0.12 * vn,
+                phi1: (vn) => Math.PI * 2 - 0.45 - 0.10 * vn,
+                gap: 0.0022, thick: 0.0048, uSegs: 18, vSegs: 14, mirrorX
+            }, matArmorAccent));
+
+            // ELBOW PIVOT
+            const elbowPivot = new THREE.Group();
+            elbowPivot.position.set(0, -0.282, 0);
+            shoulderPivot.add(elbowPivot);
+
+            elbowPivot.add(createActuatorDrum(0.036, 0.060, thermalActuatorMeshes));
+
+            const forearmProf = compileProfile([
+                { y: -0.262, rx: 0.026, rzF: 0.023, rzB: 0.023, sq: 2.08 },
+                { y: -0.195, rx: 0.033, rzF: 0.032, rzB: 0.032, sq: 2.15 },
+                { y: -0.105, rx: 0.044, rzF: 0.043, rzB: 0.045, sq: 2.20 },
+                { y: -0.020, rx: 0.040, rzF: 0.040, rzB: 0.042, sq: 2.12 }
+            ]);
+            const forearmCarbon = createSmoothLoft(forearmProf, matCarbon, 36, 22);
+            if (mirrorX) forearmCarbon.scale.x = -1;
+            elbowPivot.add(forearmCarbon);
+
+            // Full-Wrap Interlocking Forearm Porcelain Gauntlet + Titanium Medial Counter-Shell
+            elbowPivot.add(createDiagonalPanel(forearmProf, {
+                v0: (u) => 0.06 + 0.08 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.90 - 0.12 * Math.abs(u - 0.5) * 2,
+                phi0: (vn) => 0.06 + 0.18 * (1 - vn),
+                phi1: (vn) => 3.04 - 0.18 * (1 - vn),
+                gap: 0.0024, thick: 0.0052, uSegs: 24, vSegs: 16, mirrorX,
+                ridgeFn: (u, vn) => 0.0026 * Math.sin(Math.PI * u) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            elbowPivot.add(createDiagonalPanel(forearmProf, {
+                v0: 0.12, v1: 0.84,
+                phi0: 3.16, phi1: Math.PI * 2 - 0.08,
+                gap: 0.0022, thick: 0.0044, uSegs: 16, vSegs: 14, mirrorX
+            }, matArmorAccent));
+
+            elbowPivot.add(createSurfaceLightStrip(forearmProf, [
+                [0.16, 1.57], [0.28, 1.57], [0.40, 1.57]
+            ], 0.0076, 0.0012, matVisorGlow, mirrorX));
+
+            const wristCollar = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.022, 0.020, 24), matTitanium);
+            wristCollar.position.y = -0.264;
+            elbowPivot.add(wristCollar);
+
+            // ARTICULATED 22-DoF SCULPTED ROBOTIC HAND
+            const hand = new THREE.Group();
+            hand.position.set(0, -0.278, 0);
+            elbowPivot.add(hand);
+
+            const palmProf = compileProfile([
+                { y: -0.075, rx: 0.011, rzF: 0.032, rzB: 0.030, sq: 2.3 },
+                { y: -0.040, rx: 0.013, rzF: 0.035, rzB: 0.033, sq: 2.3 },
+                { y: -0.012, rx: 0.014, rzF: 0.029, rzB: 0.027, sq: 2.2 },
+                { y:  0.004, rx: 0.013, rzF: 0.020, rzB: 0.020, sq: 2.0 }
+            ]);
+            hand.add(createSmoothLoft(palmProf, matArmorDark, 24, 12));
+
+            hand.add(createDiagonalPanel(palmProf, {
+                v0: 0.12, v1: 0.88,
+                phi0: 0.30, phi1: Math.PI - 0.30,
+                gap: 0.0016, thick: 0.0036, uSegs: 14, vSegs: 10, mirrorX
+            }, matArmorShell));
+
+            const fingerPivots = [];
+            [
+                { z:  0.022, len: 0.070, r: 0.0056, bias: 0.00 },
+                { z:  0.007, len: 0.078, r: 0.0058, bias: 0.08 },
+                { z: -0.008, len: 0.072, r: 0.0054, bias: 0.16 },
+                { z: -0.022, len: 0.058, r: 0.0048, bias: 0.25 }
+            ].forEach(({ z, len, r, bias }) => {
+                const fProx = new THREE.Group();
+                fProx.position.set(0, -0.073, z);
+                const p1 = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 0.86, len * 0.44, 12), matArmorShell);
+                p1.position.y = -len * 0.22;
+                fProx.add(p1);
+                const mcpPin = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.96, r * 0.96, r * 2.2, 10), matCopperDetail);
+                mcpPin.rotation.x = Math.PI / 2;
+                fProx.add(mcpPin);
+
+                const fMid = new THREE.Group();
+                fMid.position.set(0, -len * 0.44, 0);
+                fMid.add(new THREE.Mesh(new THREE.SphereGeometry(r * 0.92, 10, 10), matTitanium));
+                const p2 = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.84, r * 0.72, len * 0.32, 12), matArmorAccent);
+                p2.position.y = -len * 0.16;
+                fMid.add(p2);
+                fProx.add(fMid);
+
+                const fDist = new THREE.Group();
+                fDist.position.set(0, -len * 0.32, 0);
+                fDist.add(new THREE.Mesh(new THREE.SphereGeometry(r * 0.78, 10, 10), matTitanium));
+                const p3 = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.70, r * 0.48, len * 0.24, 12), matElastomer);
+                p3.position.y = -len * 0.12;
+                fDist.add(p3);
+                fMid.add(fDist);
+
+                hand.add(fProx);
+                fingerPivots.push({ fProx, fMid, fDist, side, bias });
+            });
+
+            const thumbProx = new THREE.Group();
+            thumbProx.position.set(-side * 0.008, -0.032, 0.033);
+            thumbProx.rotation.set(0.42, -side * 0.25, 0);
+            const tp1 = new THREE.Mesh(new THREE.CylinderGeometry(0.0066, 0.0058, 0.032, 10), matArmorShell);
+            tp1.position.y = -0.016;
+            thumbProx.add(tp1);
+            const thumbDist = new THREE.Group();
+            thumbDist.position.set(0, -0.032, 0);
+            const tp2 = new THREE.Mesh(new THREE.CylinderGeometry(0.0056, 0.0044, 0.025, 10), matElastomer);
+            tp2.position.y = -0.0125;
+            thumbDist.add(tp2);
+            thumbProx.add(thumbDist);
+            hand.add(thumbProx);
+
+            armJoints.push({ shoulderPivot, elbowPivot, hand, fingerPivots, thumbProx, thumbDist, side });
+            registerPart(shoulderPivot, shoulderPivot.position.clone(), new THREE.Vector3(side * 0.34, 0.42, 0.04));
+        });
+
+        // -------------------------------------------------------------------------
+        // 6. FULL-WRAP ATHLETIC LEGS, 4-BAR TITANIUM KNEE, INTEGRATED ACHILLES CARTRIDGE & BLADE BOOTS
+        // -------------------------------------------------------------------------
+        const legJoints = [];
+        [-1, 1].forEach(side => {
+            const mirrorX = (side === -1);
+            const hipPivot = new THREE.Group();
+            hipPivot.position.set(side * 0.114, 0.905, 0);
+            robotRoot.add(hipPivot);
+
+            const hipJoint = createActuatorDrum(0.050, 0.068, thermalActuatorMeshes);
+            hipJoint.position.set(-side * 0.010, 0, 0);
+            hipPivot.add(hipJoint);
+
+            // Muscular Balanced Athletic Thigh Profile (sweeping forward quad + full hamstring S-curve)
+            const thighProf = compileProfile([
+                { y: -0.430, rx: 0.048, rzF: 0.054, rzB: 0.048, cx: -0.008, cz:  0.002, sq: 2.15 },
+                { y: -0.340, rx: 0.058, rzF: 0.068, rzB: 0.058, cx: -0.004, cz:  0.005, sq: 2.22, crestF: 0.006 },
+                { y: -0.220, rx: 0.068, rzF: 0.080, rzB: 0.070, cx:  0.002, cz:  0.007, sq: 2.26, crestF: 0.007 },
+                { y: -0.100, rx: 0.073, rzF: 0.084, rzB: 0.078, cx:  0.004, cz:  0.002, sq: 2.22 },
+                { y: -0.012, rx: 0.060, rzF: 0.066, rzB: 0.068, cx: -0.002, cz: -0.003, sq: 2.10 },
+                { y:  0.036, rx: 0.038, rzF: 0.044, rzB: 0.044, cx: -0.012, cz: -0.003, sq: 2.00 }
+            ]);
+            const thighCarbon = createSmoothLoft(thighProf, matCarbon, 44, 24);
+            if (mirrorX) thighCarbon.scale.x = -1;
+            hipPivot.add(thighCarbon);
+
+            // 360° Interlocking Thigh Plates (Front-Lateral Porcelain + Posterior Hamstring Porcelain + Medial Titanium)
+            hipPivot.add(createDiagonalPanel(thighProf, {
+                v0: (u) => 0.11 + 0.09 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.88 - 0.14 * (1 - u),
+                phi0: (vn) => -0.78 + 0.10 * (1 - vn),
+                phi1: (vn) =>  1.78 + 0.12 * vn,
+                gap: 0.0024, thick: 0.0058, uSegs: 28, vSegs: 22, mirrorX,
+                ridgeFn: (u, vn) => 0.0034 * Math.exp(-Math.pow((u - 0.36) / 0.22, 2)) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            hipPivot.add(createDiagonalPanel(thighProf, {
+                v0: (u) => 0.12 + 0.10 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.82 - 0.10 * Math.abs(u - 0.5) * 2,
+                phi0: (vn) => 1.88 + 0.12 * vn,
+                phi1: (vn) => 3.74 - 0.08 * vn,
+                gap: 0.0024, thick: 0.0054, uSegs: 22, vSegs: 18, mirrorX
+            }, matArmorShell));
+
+            hipPivot.add(createDiagonalPanel(thighProf, {
+                v0: 0.16, v1: 0.78,
+                phi0: 3.84, phi1: 5.38,
+                gap: 0.0022, thick: 0.0046, uSegs: 18, vSegs: 16, mirrorX
+            }, matArmorAccent));
+
+            hipPivot.add(createSurfaceLightStrip(thighProf, [
+                [0.72, 1.48], [0.54, 1.50], [0.36, 1.52]
+            ], 0.0080, 0.0012, matVisorGlow, mirrorX));
+
+            // KNEE PIVOT: EXPOSED 4-BAR TITANIUM MECHANISM + ANGULAR RAZOR SPLIT PATELLA BLADE
+            const kneePivot = new THREE.Group();
+            kneePivot.position.set(-side * 0.008, -0.430, 0);
+            hipPivot.add(kneePivot);
+
+            const kneeJoint = createActuatorDrum(0.045, 0.076, thermalActuatorMeshes);
+            kneePivot.add(kneeJoint);
+
+            [-1, 1].forEach(kSide => {
+                const clevis = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.074, 0.036), matTitanium);
+                clevis.position.set(kSide * 0.042, -0.005, 0.002);
+                clevis.rotation.x = 0.08;
+                clevis.castShadow = true;
+                kneePivot.add(clevis);
+            });
+
+            const patellaProf = compileProfile([
+                { y: -0.044, rx: 0.028, rzF: 0.054, rzB: 0.018, sq: 2.4, crestF: 0.012 },
+                { y:  0.002, rx: 0.040, rzF: 0.064, rzB: 0.018, sq: 2.5, crestF: 0.015 },
+                { y:  0.044, rx: 0.032, rzF: 0.056, rzB: 0.018, sq: 2.4, crestF: 0.010 }
+            ]);
+            kneePivot.add(createDiagonalPanel(patellaProf, {
+                v0: (u) => 0.08 + 0.20 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.92 - 0.16 * Math.abs(u - 0.5) * 2,
+                phi0: -0.88, phi1: 0.88,
+                gap: 0.0022, thick: 0.0052, uSegs: 20, vSegs: 14, mirrorX,
+                ridgeFn: (u, vn) => 0.0038 * (1.0 - Math.abs(u - 0.5) * 2) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            // LOWER LEG: FULL ATHLETIC CALF SWEEP + TIGHT INTEGRATED REAR ACHILLES PISTON CARTRIDGE
+            const shinProf = compileProfile([
+                { y: -0.413, rx: 0.030, rzF: 0.034, rzB: 0.030, cx: 0.004, cz:  0.003, sq: 2.10 },
+                { y: -0.320, rx: 0.034, rzF: 0.040, rzB: 0.036, cx: 0.004, cz:  0.002, sq: 2.15, crestF: 0.005 },
+                { y: -0.205, rx: 0.048, rzF: 0.050, rzB: 0.058, cx: 0.002, cz: -0.004, sq: 2.20, crestF: 0.007 },
+                { y: -0.105, rx: 0.056, rzF: 0.056, rzB: 0.070, cx: 0.001, cz: -0.006, sq: 2.22, crestF: 0.008 },
+                { y: -0.020, rx: 0.046, rzF: 0.048, rzB: 0.050, cx: 0.000, cz:  0.000, sq: 2.10 }
+            ]);
+            const shinCarbon = createSmoothLoft(shinProf, matCarbon, 42, 24);
+            if (mirrorX) shinCarbon.scale.x = -1;
+            kneePivot.add(shinCarbon);
+
+            // 360° Interlocking Lower Leg Fairings (Front-Lateral Greave + Rear Calf Cowl + Medial Titanium Shield)
+            kneePivot.add(createDiagonalPanel(shinProf, {
+                v0: (u) => 0.08 + 0.10 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.90 - 0.14 * Math.abs(u - 0.5) * 2,
+                phi0: (vn) => -0.90 - 0.12 * vn,
+                phi1: (vn) =>  1.76 + 0.10 * vn,
+                gap: 0.0024, thick: 0.0056, uSegs: 26, vSegs: 22, mirrorX,
+                ridgeFn: (u, vn) => 0.0044 * Math.exp(-Math.pow((u - 0.36) / 0.18, 2)) * Math.sin(Math.PI * vn)
+            }, matArmorShell));
+
+            kneePivot.add(createDiagonalPanel(shinProf, {
+                v0: (u) => 0.34 + 0.12 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.89 - 0.10 * Math.abs(u - 0.5) * 2,
+                phi0: (vn) => 1.88,
+                phi1: (vn) => 3.74,
+                gap: 0.0024, thick: 0.0052, uSegs: 20, vSegs: 16, mirrorX
+            }, matArmorShell));
+
+            kneePivot.add(createDiagonalPanel(shinProf, {
+                v0: 0.14, v1: 0.82,
+                phi0: 3.84, phi1: 5.26,
+                gap: 0.0022, thick: 0.0044, uSegs: 16, vSegs: 16, mirrorX
+            }, matArmorAccent));
+
+            // Sleek Compact Rear Achilles Hydraulic Cartridge (hugs calf contour tightly — NO floating antenna!)
+            kneePivot.add(createStrut(
+                [side * 0.004, -0.175, -0.056],
+                [side * 0.008, -0.405, -0.044],
+                0.0076, 0.0044, matGunmetal, matChrome
+            ));
+
+            // ANKLE PIVOT (world y = 0.062)
+            const anklePivot = new THREE.Group();
+            anklePivot.position.set(side * 0.012, -0.413, 0);
+            kneePivot.add(anklePivot);
+
+            anklePivot.add(createActuatorDrum(0.027, 0.058, thermalActuatorMeshes));
+
+            // SCULPTED AERODYNAMIC KINETIC CARBON-BLADE SPRINT FOOT (`y = 0.000`)
+            const foot = new THREE.Group();
+            anklePivot.add(foot);
+
+            const ffPad = new THREE.Mesh(new THREE.BoxGeometry(0.072, 0.011, 0.098), matElastomer);
+            ffPad.position.set(0, -0.0565, 0.104);
+            ffPad.castShadow = true;
+            ffPad.receiveShadow = true;
+            foot.add(ffPad);
+
+            const heelPad = new THREE.Mesh(new THREE.BoxGeometry(0.054, 0.012, 0.058), matElastomer);
+            heelPad.position.set(0, -0.0560, -0.034);
+            heelPad.castShadow = true;
+            heelPad.receiveShadow = true;
+            foot.add(heelPad);
+
+            const archShape = new THREE.Shape();
+            archShape.moveTo(-0.058, -0.050);
+            archShape.lineTo(-0.012, -0.050);
+            archShape.quadraticCurveTo(0.022, -0.024, 0.062, -0.051);
+            archShape.lineTo(0.152, -0.051);
+            archShape.quadraticCurveTo(0.156, -0.038, 0.132, -0.032);
+            archShape.bezierCurveTo(0.088, -0.016, 0.044, -0.004, 0.008, -0.008);
+            archShape.lineTo(-0.052, -0.022);
+            archShape.closePath();
+
+            const bladeGeom = new THREE.ExtrudeGeometry(archShape, {
+                depth: 0.050, bevelEnabled: true, bevelThickness: 0.004, bevelSize: 0.004, bevelSegments: 3
+            });
+            bladeGeom.translate(0, 0, -0.025);
+            bladeGeom.rotateY(-Math.PI / 2);
+            bladeGeom.computeVertexNormals();
+            const carbonBlade = new THREE.Mesh(bladeGeom, matCarbon);
+            carbonBlade.castShadow = true;
+            carbonBlade.receiveShadow = true;
+            foot.add(carbonBlade);
+
+            const matFootPearl = new THREE.MeshPhysicalMaterial({
+                color: 0xDCDAD4, roughness: 0.18, metalness: 0.34,
+                clearcoat: 1.0, clearcoatRoughness: 0.04, envMapIntensity: 1.24
+            });
+            footPearlMats.push(matFootPearl);
+
+            const footInstepProf = compileProfile([
+                { y: -0.052, rx: 0.032, rzF: 0.148, rzB: 0.056, cz: 0.012, sq: 2.3 },
+                { y: -0.032, rx: 0.033, rzF: 0.128, rzB: 0.052, cz: 0.006, sq: 2.2, crestF: 0.008 },
+                { y: -0.014, rx: 0.029, rzF: 0.072, rzB: 0.042, cz: 0.000, sq: 2.1, crestF: 0.006 },
+                { y:  0.002, rx: 0.024, rzF: 0.034, rzB: 0.034, cz: -0.002, sq: 2.0 }
+            ]);
+            foot.add(createDiagonalPanel(footInstepProf, {
+                v0: (u) => 0.14 + 0.14 * Math.abs(u - 0.5) * 2,
+                v1: (u) => 0.94 - 0.08 * Math.abs(u - 0.5) * 2,
+                phi0: (vn) => -0.96 + 0.18 * vn,
+                phi1: (vn) =>  0.96 - 0.18 * vn,
+                gap: 0.0022, thick: 0.0048, uSegs: 22, vSegs: 16, mirrorX,
+                ridgeFn: (u, vn) => 0.0032 * (1.0 - Math.abs(u - 0.5) * 2) * (1.0 - vn * 0.4)
+            }, matFootPearl));
+
+            [
+                { tx: -side * 0.018, w: 0.024 },
+                { tx:  side * 0.014, w: 0.034 }
+            ].forEach(({ tx, w }) => {
+                const toeClaw = new THREE.Mesh(new THREE.BoxGeometry(w, 0.011, 0.036), matTitanium);
+                toeClaw.position.set(tx, -0.050, 0.144);
+                toeClaw.rotation.x = 0.20;
+                toeClaw.castShadow = true;
+                foot.add(toeClaw);
+            });
+
+            const heelSpur = new THREE.Mesh(new THREE.BoxGeometry(0.034, 0.022, 0.042), matTitanium);
+            heelSpur.position.set(0, -0.038, -0.052);
+            heelSpur.rotation.x = -0.18;
+            heelSpur.castShadow = true;
+            foot.add(heelSpur);
+
+            [-1, 1].forEach(fSide => {
+                const ankleFork = new THREE.Mesh(new THREE.BoxGeometry(0.006, 0.040, 0.020), matTitanium);
+                ankleFork.position.set(fSide * 0.031, -0.014, -0.006);
+                ankleFork.rotation.x = 0.22;
+                foot.add(ankleFork);
+            });
+
+            const footOpticTrim = new THREE.Mesh(new THREE.BoxGeometry(0.0022, 0.0024, 0.052), matVisorGlow);
+            footOpticTrim.position.set(side * 0.029, -0.025, 0.066);
+            footOpticTrim.rotation.x = 0.26;
+            foot.add(footOpticTrim);
+
+            legJoints.push({ hipPivot, kneePivot, anklePivot, hipJoint, kneeJoint, side });
+            registerPart(hipPivot, hipPivot.position.clone(), new THREE.Vector3(side * 0.28, 0.905, side * 0.14));
+        });
+
+        applyFinish(activeFinish);
+        applyStudio(activeStudio);
+
+        // --- TRUE EXTRUDED INVOLUTE GEAR CUTAWAY ASSEMBLY (STAGE 2: 5.0:1) ---
+        function createInvoluteGearMesh(numTeeth, pitchRadius, toothHeight, thickness, boreRadius, material, isInternal=false) {
+            const shape = new THREE.Shape();
+            const ptsPerTooth = 6;
+            const totalPts = numTeeth * ptsPerTooth;
+            const rOuter = isInternal ? (pitchRadius + toothHeight * 0.45) : (pitchRadius + toothHeight * 0.45);
+            const rRoot  = isInternal ? (pitchRadius - toothHeight * 0.55) : (pitchRadius - toothHeight * 0.55);
+
+            for (let i = 0; i < numTeeth; i++) {
+                const baseAng = (i / numTeeth) * Math.PI * 2;
+                const step = (Math.PI * 2) / numTeeth;
+                const coords = [
+                    [rRoot, baseAng - 0.32 * step],
+                    [pitchRadius, baseAng - 0.18 * step],
+                    [rOuter, baseAng - 0.08 * step],
+                    [rOuter, baseAng + 0.08 * step],
+                    [pitchRadius, baseAng + 0.18 * step],
+                    [rRoot, baseAng + 0.32 * step]
+                ];
+                coords.forEach(([r, a], idx) => {
+                    const x = r * Math.cos(a);
+                    const y = r * Math.sin(a);
+                    if (i === 0 && idx === 0) shape.moveTo(x, y);
+                    else shape.lineTo(x, y);
+                });
+            }
+            shape.closePath();
+
+            if (!isInternal && boreRadius > 0) {
+                const hole = new THREE.Path();
+                hole.absarc(0, 0, boreRadius, 0, Math.PI * 2, true);
+                shape.holes.push(hole);
+            }
+
+            if (isInternal) {
+                // Create outer ring housing with gear teeth as inner hole!
+                const ringShape = new THREE.Shape();
+                ringShape.absarc(0, 0, pitchRadius + 0.08, 0, Math.PI * 2, false);
+                ringShape.holes.push(shape);
+                const geom = new THREE.ExtrudeGeometry(ringShape, { depth: thickness, bevelEnabled: true, bevelSize: 0.003, bevelThickness: 0.003 });
+                geom.center();
+                const mesh = new THREE.Mesh(geom, material);
+                mesh.rotation.x = Math.PI / 2;
+                return mesh;
+            }
+
+            const geom = new THREE.ExtrudeGeometry(shape, { depth: thickness, bevelEnabled: true, bevelSize: 0.003, bevelThickness: 0.003 });
+            geom.center();
+            const mesh = new THREE.Mesh(geom, material);
+            mesh.rotation.x = Math.PI / 2;
+            return mesh;
+        }
+
+        const actuatorDetailGroup = new THREE.Group();
+        actuatorDetailGroup.position.set(0, 0.9, 0);
+        actuatorDetailGroup.visible = false;
+        scene.add(actuatorDetailGroup);
+
+        // Stator Housing Outer Cutaway + Copper Windings
+        const statorHousing = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.45, 0.45, 0.30, 36, 1, false, 0, Math.PI * 1.45),
+            new THREE.MeshStandardMaterial({ color: 0x1E293B, metalness: 0.85, roughness: 0.3, side: THREE.DoubleSide })
+        );
+        statorHousing.position.y = -0.10;
+        actuatorDetailGroup.add(statorHousing);
+
+        for (let i = 0; i < 12; i++) {
+            const angle = (i / 12) * Math.PI * 1.4;
+            const coil = new THREE.Mesh(
+                new THREE.BoxGeometry(0.055, 0.22, 0.075),
+                new THREE.MeshStandardMaterial({ color: 0xD97706, metalness: 0.9, roughness: 0.2 })
+            );
+            coil.position.set(0.36 * Math.cos(angle), -0.10, 0.36 * Math.sin(angle));
+            coil.rotation.y = -angle;
+            actuatorDetailGroup.add(coil);
+        }
+
+        // Real 64-Tooth Internal Ring Gear (Fixed)
+        const ringGearMesh = createInvoluteGearMesh(64, 0.36, 0.032, 0.14, 0,
+            new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.9, roughness: 0.25 }), true);
+        ringGearMesh.position.y = 0.09;
+        actuatorDetailGroup.add(ringGearMesh);
+
+        // Real 16-Tooth Involute Sun Pinion (r_sun = 0.09, r_planet = 0.135 -> r_sun + 2*r_planet = 0.36 = r_ring!)
+        const sunPivot = new THREE.Group();
+        sunPivot.position.y = 0.09;
+        const sunGear = createInvoluteGearMesh(16, 0.09, 0.030, 0.16, 0.038,
+            new THREE.MeshStandardMaterial({ color: 0x38BDF8, metalness: 0.95, roughness: 0.2 }), false);
+        sunPivot.add(sunGear);
+        actuatorDetailGroup.add(sunPivot);
+
+        // 4x Real 24-Tooth Involute Planet Gears orbiting on carrier
+        const planetCarrier = new THREE.Group();
+        planetCarrier.position.y = 0.09;
+        actuatorDetailGroup.add(planetCarrier);
+
+        const planetGears = [];
+        for (let i = 0; i < 4; i++) {
+            const pPivot = new THREE.Group();
+            const ang = (i * Math.PI) / 2;
+            pPivot.position.set(0.225 * Math.cos(ang), 0, 0.225 * Math.sin(ang));
+            const pGear = createInvoluteGearMesh(24, 0.135, 0.030, 0.15, 0.042,
+                new THREE.MeshStandardMaterial({ color: 0x10B981, metalness: 0.9, roughness: 0.25 }), false);
+            pPivot.add(pGear);
+            planetCarrier.add(pPivot);
+            planetGears.push(pPivot);
+        }
+
+        // Central Ø12mm Through-Bore Wiring Conduit
+        const throughBore = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.032, 0.032, 0.50, 20),
+            new THREE.MeshStandardMaterial({ color: 0x0284C7, metalness: 0.95, roughness: 0.1 })
+        );
+        actuatorDetailGroup.add(throughBore);
+
+        // 3-Level 650V GaN FCML Inverter Ring
+        const ganRing = new THREE.Mesh(
+            new THREE.RingGeometry(0.22, 0.42, 36),
+            new THREE.MeshStandardMaterial({ color: 0xEC4899, metalness: 0.8, roughness: 0.3, side: THREE.DoubleSide })
+        );
+        ganRing.position.set(0, -0.26, 0);
+        ganRing.rotation.x = Math.PI / 2;
+        actuatorDetailGroup.add(ganRing);
+
+        // Create 45 kg Steel Crate Payload Mesh (Visible in Deadlift & BMW Workcell modes)
+        const payloadGroup = new THREE.Group();
+        const crateMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(0.46, 0.24, 0.20),
+            new THREE.MeshStandardMaterial({ color: 0x1E293B, metalness: 0.75, roughness: 0.35 })
+        );
+        crateMesh.castShadow = true;
+        payloadGroup.add(crateMesh);
+        const crateBand = new THREE.Mesh(
+            new THREE.BoxGeometry(0.47, 0.04, 0.21),
+            new THREE.MeshStandardMaterial({ color: 0xF59E0B, emissive: 0xD97706, emissiveIntensity: 0.45, metalness: 0.6, roughness: 0.3 })
+        );
+        payloadGroup.add(crateBand);
+        payloadGroup.visible = false;
+        scene.add(payloadGroup);
+
+        // Create 65.0 kg Heavy Industrial Parts Cart (Visible in Cart Push mode)
+        const cartGroup = new THREE.Group();
+        const cartDeck = new THREE.Mesh(
+            new THREE.BoxGeometry(0.68, 0.72, 0.70),
+            new THREE.MeshStandardMaterial({ color: 0x1E293B, metalness: 0.8, roughness: 0.3 })
+        );
+        cartDeck.position.set(0, 0.44, 0);
+        cartDeck.castShadow = true;
+        cartGroup.add(cartDeck);
+        const cartHandlebar = new THREE.Mesh(
+            new THREE.BoxGeometry(0.72, 0.14, 0.05),
+            new THREE.MeshStandardMaterial({ color: 0x10B981, emissive: 0x059669, emissiveIntensity: 0.4, metalness: 0.7, roughness: 0.25 })
+        );
+        cartHandlebar.position.set(0, 1.00, -0.36);
+        cartGroup.add(cartHandlebar);
+        [[-0.28, -0.26], [0.28, -0.26], [-0.28, 0.26], [0.28, 0.26]].forEach(([cx, cz]) => {
+            const wheel = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.05, 0.05, 0.04, 16),
+                new THREE.MeshStandardMaterial({ color: 0x0F172A, metalness: 0.5, roughness: 0.6 })
+            );
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(cx, 0.05, cz);
+            cartGroup.add(wheel);
+        });
+        cartGroup.position.set(0, 0, 0.76);
+        cartGroup.visible = false;
+        scene.add(cartGroup);
+
+        // Create 2-Step +-140 mm Staircase Assembly (Visible in Stairs + Regen mode)
+        const stairsGroup = new THREE.Group();
+        [[0.07, 0.35], [0.14, 0.80]].forEach(([h, zPos], idx) => {
+            const stepBox = new THREE.Mesh(
+                new THREE.BoxGeometry(1.1, h, 0.45),
+                new THREE.MeshStandardMaterial({ color: idx === 0 ? 0x1E293B : 0x334155, metalness: 0.6, roughness: 0.4 })
+            );
+            stepBox.position.set(0, h * 0.5, zPos);
+            stepBox.receiveShadow = true;
+            stairsGroup.add(stepBox);
+            const trim = new THREE.Mesh(
+                new THREE.BoxGeometry(1.11, 0.015, 0.025),
+                new THREE.MeshStandardMaterial({ color: 0x10B981, emissive: 0x10B981, emissiveIntensity: 0.5 })
+            );
+            trim.position.set(0, h, zPos - 0.22);
+            stairsGroup.add(trim);
+        });
+        stairsGroup.visible = false;
+        scene.add(stairsGroup);
+
+        // Create mu=0.18 Oil Slick Overlay Strip (Visible in Oil Recovery mode)
+        const oilMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(1.8, 0.008, 1.3),
+            new THREE.MeshStandardMaterial({ color: 0xF59E0B, emissive: 0xB45309, emissiveIntensity: 0.35, metalness: 0.9, roughness: 0.12, transparent: true, opacity: 0.72 })
+        );
+        oilMesh.position.set(0, 0.004, 0.25);
+        oilMesh.visible = false;
+        scene.add(oilMesh);
+
+        // Create 45 mm Rigid Floor Cleat (Visible in Trip Vault mode)
+        const cleatMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(1.4, 0.045, 0.06),
+            new THREE.MeshStandardMaterial({ color: 0xF43F5E, emissive: 0xE11D48, emissiveIntensity: 0.45, metalness: 0.7, roughness: 0.25 })
+        );
+        cleatMesh.position.set(0, 0.0225, 0.22);
+        cleatMesh.visible = false;
+        scene.add(cleatMesh);
+
+        // Create 360° Capture-Point (DCM) Target Ring & Chest Impulse Vector (Visible in Push-Recovery mode)
+        const pushGroup = new THREE.Group();
+        const dcmRingMesh = new THREE.Mesh(
+            new THREE.RingGeometry(0.11, 0.16, 32),
+            new THREE.MeshBasicMaterial({ color: 0x38BDF8, side: THREE.DoubleSide, transparent: true, opacity: 0.9 })
+        );
+        dcmRingMesh.rotation.x = -Math.PI / 2;
+        dcmRingMesh.position.set(0, 0.012, 0.36);
+        pushGroup.add(dcmRingMesh);
+        const pushArrowShaft = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.025, 0.025, 0.48, 16),
+            new THREE.MeshStandardMaterial({ color: 0xF43F5E, emissive: 0xE11D48, emissiveIntensity: 0.7 })
+        );
+        pushArrowShaft.rotation.x = Math.PI / 2;
+        const pushArrowHead = new THREE.Mesh(
+            new THREE.ConeGeometry(0.065, 0.16, 16),
+            new THREE.MeshStandardMaterial({ color: 0xFB7185, emissive: 0xF43F5E, emissiveIntensity: 0.85 })
+        );
+        pushArrowHead.rotation.x = Math.PI / 2;
+        pushArrowHead.position.z = 0.30;
+        const pushArrowGroup = new THREE.Group();
+        pushArrowGroup.add(pushArrowShaft);
+        pushArrowGroup.add(pushArrowHead);
+        pushArrowGroup.position.set(0, 1.26, -0.58);
+        pushGroup.add(pushArrowGroup);
+        pushGroup.visible = false;
+        scene.add(pushGroup);
+
+        // Create Articulated Spring-Return Fire Door Assembly (Visible in Spring Fire-Door mode)
+        const doorGroup = new THREE.Group();
+        const doorPostMat = new THREE.MeshStandardMaterial({ color: 0x64748B, metalness: 0.7, roughness: 0.35 });
+        const doorPostL = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.88, 0.10), doorPostMat);
+        doorPostL.position.set(0.465, 0.94, 0.72);
+        const doorPostR = new THREE.Mesh(new THREE.BoxGeometry(0.10, 1.88, 0.10), doorPostMat);
+        doorPostR.position.set(-0.465, 0.94, 0.72);
+        const doorHeader = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.08, 0.12), doorPostMat);
+        doorHeader.position.set(0, 1.90, 0.72);
+        doorGroup.add(doorPostL, doorPostR, doorHeader);
+        const doorLeafPivot = new THREE.Group();
+        doorLeafPivot.position.set(0.39, 0.0, 0.74);
+        const doorLeafMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(0.74, 1.72, 0.04),
+            new THREE.MeshStandardMaterial({ color: 0xEA580C, metalness: 0.45, roughness: 0.35, transparent: true, opacity: 0.90 })
+        );
+        doorLeafMesh.position.set(-0.39, 0.96, -0.02);
+        const crashBarMesh = new THREE.Mesh(
+            new THREE.BoxGeometry(0.62, 0.10, 0.05),
+            new THREE.MeshStandardMaterial({ color: 0xFACC15, metalness: 0.6, roughness: 0.25 })
+        );
+        crashBarMesh.position.set(-0.36, 1.04, -0.06);
+        doorLeafPivot.add(doorLeafMesh, crashBarMesh);
+        doorGroup.add(doorLeafPivot);
+        doorGroup.visible = false;
+        scene.add(doorGroup);
+
+        // Create 12-Plate Staggered Canted Uneven Terrain Course (Visible in Blind Canted Terrain mode)
+        const unevenGroup = new THREE.Group();
+        const unevenSpecs = [
+            // [x_lat, y_top, z_fwd, rx_pitch_deg, rz_roll_deg, isLeft]
+            [0.15, 0.024, 0.35, 4.0, -7.0, true], [-0.15, 0.018, 0.35, -4.0, 6.5, false],
+            [0.15, 0.052, 0.70, -5.0, 8.0, true], [-0.15, 0.036, 0.70, 5.0, -7.5, false],
+            [0.15, 0.026, 1.05, 5.5, -8.0, true], [-0.15, 0.060, 1.05, 5.5, 8.0, false],
+            [0.15, 0.064, 1.40, 6.0, 8.5, true], [-0.15, 0.028, 1.40, -5.5, -7.5, false],
+            [0.15, 0.032, 1.75, 5.0, -7.0, true], [-0.15, 0.056, 1.75, -5.0, 8.0, false],
+            [0.15, 0.034, 2.10, -4.5, 6.0, true], [-0.15, 0.024, 2.10, 4.0, -6.0, false]
+        ];
+        unevenSpecs.forEach(([px, hTop, pz, rxDeg, rzDeg, isLeft]) => {
+            const plate = new THREE.Mesh(
+                new THREE.BoxGeometry(0.29, 0.14, 0.34),
+                new THREE.MeshStandardMaterial({
+                    color: isLeft ? 0x1E3A5F : 0x43302B,
+                    metalness: 0.45,
+                    roughness: 0.55
+                })
+            );
+            plate.position.set(px, hTop - 0.07, pz);
+            plate.rotation.set(THREE.MathUtils.degToRad(rxDeg), 0, THREE.MathUtils.degToRad(rzDeg));
+            plate.receiveShadow = true;
+            unevenGroup.add(plate);
+        });
+        unevenGroup.visible = false;
+        scene.add(unevenGroup);
+
+        // Create Low-Clearance Overhead Steel Gantry (1.41 m soffit, Visible in 1.41m Gantry Duck mode)
+        const gantryGroup = new THREE.Group();
+        const gantrySteelMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.75, roughness: 0.35 });
+        const gantryPostL = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.65, 0.16), gantrySteelMat);
+        gantryPostL.position.set(0.60, 0.825, 1.20);
+        const gantryPostR = new THREE.Mesh(new THREE.BoxGeometry(0.12, 1.65, 0.16), gantrySteelMat);
+        gantryPostR.position.set(-0.60, 0.825, 1.20);
+        const gantryBeam = new THREE.Mesh(
+            new THREE.BoxGeometry(1.24, 0.24, 0.56),
+            new THREE.MeshStandardMaterial({ color: 0xF59E0B, metalness: 0.5, roughness: 0.35 })
+        );
+        gantryBeam.position.set(0, 1.53, 1.20);
+        const soffitTrim = new THREE.Mesh(
+            new THREE.BoxGeometry(1.24, 0.015, 0.565),
+            new THREE.MeshStandardMaterial({ color: 0xEF4444, emissive: 0xEF4444, emissiveIntensity: 0.65 })
+        );
+        soffitTrim.position.set(0, 1.41, 1.20);
+        gantryGroup.add(gantryPostL, gantryPostR, gantryBeam, soffitTrim);
+        gantryGroup.visible = false;
+        scene.add(gantryGroup);
+
+        // --- INTERACTION & KINEMATIC STATE ---
+        let currentMode = 'stance';
+        let explodedLerp = 0.0;
+        let autoOrbit = true;
+        let isWireframe = false;
+        let isThermal = false;
+        let animClock = 0;
+
+        // Manual slider offsets
+        let manualTorsoRad = 0;
+        let manualArmRad = 0;
+        let manualKneeRad = 0;
+
+        const btnStance = document.getElementById('btn-stance');
+        const btnExploded = document.getElementById('btn-exploded');
+        const btnDeadlift = document.getElementById('btn-deadlift');
+        const btnSprint = document.getElementById('btn-sprint');
+        const btnBmw = document.getElementById('btn-bmw');
+        const btnStairs = document.getElementById('btn-stairs');
+        const btnCart = document.getElementById('btn-cart');
+        const btnOil = document.getElementById('btn-oil');
+        const btnTrip = document.getElementById('btn-trip');
+        const btnSidestep = document.getElementById('btn-sidestep');
+        const btnThermal = document.getElementById('btn-thermal');
+        const btnActuator = document.getElementById('btn-actuator');
+        const btnPushstep = document.getElementById('btn-pushstep');
+        const btnDoor = document.getElementById('btn-door');
+        const btnUneven = document.getElementById('btn-uneven');
+        const btnGantry = document.getElementById('btn-gantry');
+        const allModeBtns = [btnStance, btnExploded, btnDeadlift, btnSprint, btnBmw, btnStairs, btnCart, btnOil, btnTrip, btnSidestep, btnThermal, btnActuator, btnPushstep, btnDoor, btnUneven, btnGantry];
+
+        function resetJointRotations() {
+            robotRoot.position.set(0, 0, 0);
+            torsoPivot.rotation.set(0, 0, 0);
+            armJoints.forEach(a => {
+                a.shoulderPivot.rotation.set(0, 0, 0);
+                a.elbowPivot.rotation.set(0, 0, 0);
+            });
+            legJoints.forEach(l => {
+                l.hipPivot.rotation.set(0, 0, 0);
+                l.kneePivot.rotation.set(0, 0, 0);
+                l.anklePivot.rotation.set(0, 0, 0);
+            });
+        }
+
+        function setMode(mode, activeBtn) {
+            currentMode = mode;
+            allModeBtns.forEach(b => b.classList.remove('active'));
+            activeBtn.classList.add('active');
+            resetJointRotations();
+
+            if (mode === 'thermal') {
+                isThermal = true;
+                applyThermalMaterials(true);
+                robotRoot.visible = true;
+                actuatorDetailGroup.visible = false;
+                payloadGroup.visible = false;
+                cartGroup.visible = false;
+                stairsGroup.visible = false;
+                oilMesh.visible = false;
+                cleatMesh.visible = false;
+                pushGroup.visible = false;
+                doorGroup.visible = false;
+                unevenGroup.visible = false;
+                gantryGroup.visible = false;
+                camera.position.set(1.54, 1.05, 2.88);
+                controls.target.set(0, 0.89, 0);
+                return;
+            } else if (isThermal) {
+                isThermal = false;
+                applyThermalMaterials(false);
+            }
+
+            if (mode === 'actuator') {
+                robotRoot.visible = false;
+                actuatorDetailGroup.visible = true;
+                payloadGroup.visible = false;
+                cartGroup.visible = false;
+                stairsGroup.visible = false;
+                oilMesh.visible = false;
+                cleatMesh.visible = false;
+                pushGroup.visible = false;
+                doorGroup.visible = false;
+                unevenGroup.visible = false;
+                gantryGroup.visible = false;
+                camera.position.set(0.85, 1.35, 1.05);
+                controls.target.set(0, 0.9, 0);
+                document.getElementById('val-knee-torque').innerText = '510 Nm PEAK TEST';
+                document.getElementById('bar-knee-torque').style.width = '100%';
+                document.getElementById('val-hip-torque').innerText = 'AGMA SF: 1.89 Contact';
+                document.getElementById('bar-hip-torque').style.width = '82%';
+                document.getElementById('val-temp-core').innerText = 'GaN Eff: 95.24%';
+                document.getElementById('bar-temp-core').style.width = '95%';
+                return;
+            } else {
+                robotRoot.visible = true;
+                actuatorDetailGroup.visible = false;
+            }
+
+            payloadGroup.visible = (mode === 'deadlift' || mode === 'bmw');
+            cartGroup.visible = (mode === 'cart');
+            stairsGroup.visible = (mode === 'stairs');
+            oilMesh.visible = (mode === 'oil');
+            cleatMesh.visible = (mode === 'trip');
+            pushGroup.visible = (mode === 'pushstep');
+            doorGroup.visible = (mode === 'door');
+            unevenGroup.visible = (mode === 'uneven');
+            gantryGroup.visible = (mode === 'gantry');
+            const camWide = ['sprint', 'cart', 'oil', 'stairs', 'trip', 'sidestep', 'pushstep', 'door', 'uneven', 'gantry'].includes(mode);
+            if (camWide) {
+                camera.position.set(2.30, 1.42, 2.90);
+            } else {
+                camera.position.set(1.54, 1.05, 2.88);
+            }
+            controls.target.set(0, 0.89, 0);
+
+            if (mode === 'bmw') {
+                document.getElementById('val-knee-torque').innerText = '145.0 Nm (Takt Sync)';
+                document.getElementById('bar-knee-torque').style.width = '28%';
+                document.getElementById('val-hip-torque').innerText = 'Cycle: 16.35s (p95: 17.01s)';
+                document.getElementById('bar-hip-torque').style.width = '28%';
+                document.getElementById('val-temp-core').innerText = 'OEE: 98.06% Class-A';
+                document.getElementById('bar-temp-core').style.width = '98%';
+            } else if (mode === 'cart') {
+                document.getElementById('val-knee-torque').innerText = '131.0 Nm (Cart Push)';
+                document.getElementById('bar-knee-torque').style.width = '26%';
+                document.getElementById('val-hip-torque').innerText = '65kg Cart (+1.31m | 119.5kg)';
+                document.getElementById('bar-hip-torque').style.width = '68%';
+                document.getElementById('val-temp-core').innerText = 'Push Mean: 30.1N (0N Rel)';
+                document.getElementById('bar-temp-core').style.width = '52%';
+            } else if (mode === 'oil') {
+                document.getElementById('val-knee-torque').innerText = '2.08m Oil Clear (3.6° R)';
+                document.getElementById('bar-knee-torque').style.width = '40%';
+                document.getElementById('val-hip-torque').innerText = 'mu_hat: 1.00->0.16->0.45';
+                document.getElementById('bar-hip-torque').style.width = '36%';
+                document.getElementById('val-temp-core').innerText = 'Zero Oracle (0.0N Sky)';
+                document.getElementById('bar-temp-core').style.width = '46%';
+            } else if (mode === 'stairs') {
+                document.getElementById('val-knee-torque').innerText = '154.0 Nm / 130.1 Nm';
+                document.getElementById('bar-knee-torque').style.width = '30%';
+                document.getElementById('val-hip-torque').innerText = '+-140mm Stairs (2.39/2.37m)';
+                document.getElementById('bar-hip-torque').style.width = '58%';
+                document.getElementById('val-temp-core').innerText = '800V Regen: 206.5 J Net';
+                document.getElementById('bar-temp-core').style.width = '82%';
+            } else if (mode === 'trip') {
+                document.getElementById('val-knee-torque').innerText = '119.4 Nm (Trip Vault)';
+                document.getElementById('bar-knee-torque').style.width = '24%';
+                document.getElementById('val-hip-torque').innerText = '45mm Cleat (61.5mm Z)';
+                document.getElementById('bar-hip-torque').style.width = '54%';
+                document.getElementById('val-temp-core').innerText = '2 Triggers | 2.00m PASS';
+                document.getElementById('bar-temp-core').style.width = '78%';
+            } else if (mode === 'sidestep') {
+                document.getElementById('val-knee-torque').innerText = '1.41m ±Y (0.153m Gap)';
+                document.getElementById('bar-knee-torque').style.width = '58%';
+                document.getElementById('val-hip-torque').innerText = 'Roll/Yaw: 4.2° / 0.53°';
+                document.getElementById('bar-hip-torque').style.width = '42%';
+                document.getElementById('val-temp-core').innerText = '65N Shove Rejected';
+                document.getElementById('bar-temp-core').style.width = '85%';
+            } else if (mode === 'pushstep') {
+                document.getElementById('val-knee-torque').innerText = '212.3 Nm / 510 (4/4)';
+                document.getElementById('bar-knee-torque').style.width = '42%';
+                document.getElementById('val-hip-torque').innerText = '247.7 Nm | 67ms Trigger';
+                document.getElementById('bar-hip-torque').style.width = '71%';
+                document.getElementById('val-temp-core').innerText = '36.3 N·s: 4/4 vs 0/4';
+                document.getElementById('bar-temp-core').style.width = '100%';
+            } else if (mode === 'door') {
+                document.getElementById('val-knee-torque').innerText = '128.1 Nm (1.87 m Pass)';
+                document.getElementById('bar-knee-torque').style.width = '25%';
+                document.getElementById('val-hip-torque').innerText = 'Door: 92.0° -> 1.6° (133N)';
+                document.getElementById('bar-hip-torque').style.width = '88%';
+                document.getElementById('val-temp-core').innerText = 'Roll/Pitch: 1.4° / 2.2°';
+                document.getElementById('bar-temp-core').style.width = '96%';
+            } else if (mode === 'uneven') {
+                document.getElementById('val-knee-torque').innerText = '139.9 Nm (2.93 m Pass)';
+                document.getElementById('bar-knee-torque').style.width = '27%';
+                document.getElementById('val-hip-torque').innerText = 'Est Z: 97.5mm | ±10.4°';
+                document.getElementById('bar-hip-torque').style.width = '78%';
+                document.getElementById('val-temp-core').innerText = 'Roll/Pitch: 5.4° / 4.3°';
+                document.getElementById('bar-temp-core').style.width = '98%';
+            } else if (mode === 'gantry') {
+                document.getElementById('val-knee-torque').innerText = '171.8 Nm (2.25 m Pass)';
+                document.getElementById('bar-knee-torque').style.width = '34%';
+                document.getElementById('val-hip-torque').innerText = '50.2 mm Clear | 0 N Hit';
+                document.getElementById('bar-hip-torque').style.width = '94%';
+                document.getElementById('val-temp-core').innerText = 'CoM -181mm -> 0.84m';
+                document.getElementById('bar-temp-core').style.width = '96%';
+            } else if (mode === 'deadlift') {
+                document.getElementById('val-knee-torque').innerText = '146.9 Nm (MuJoCo) / 510';
+                document.getElementById('bar-knee-torque').style.width = '29%';
+                document.getElementById('val-hip-torque').innerText = '147.2 Nm (99.5kg) / 510';
+                document.getElementById('bar-hip-torque').style.width = '29%';
+                document.getElementById('val-temp-core').innerText = '83.2°C Cu / 180°C';
+                document.getElementById('bar-temp-core').style.width = '46%';
+            } else if (mode === 'sprint') {
+                document.getElementById('val-knee-torque').innerText = '142.9 Nm (MuJoCo) / 510';
+                document.getElementById('bar-knee-torque').style.width = '28%';
+                document.getElementById('val-hip-torque').innerText = '2.44 m Walk (70N Push OK)';
+                document.getElementById('bar-hip-torque').style.width = '48%';
+                document.getElementById('val-temp-core').innerText = '83.2°C / 180°C';
+                document.getElementById('bar-temp-core').style.width = '46%';
+            } else {
+                document.getElementById('val-knee-torque').innerText = '163.3 Nm (Peak Analyt.)';
+                document.getElementById('bar-knee-torque').style.width = '32%';
+                document.getElementById('val-hip-torque').innerText = '46.4 Nm (120N Shock)';
+                document.getElementById('bar-hip-torque').style.width = '18%';
+                document.getElementById('val-temp-core').innerText = '83.2°C / 180°C';
+                document.getElementById('bar-temp-core').style.width = '46%';
+            }
+        }
+
+        function applyThermalMaterials(enable) {
+            thermalPelvisMeshes.forEach(m => { m.material = enable ? matThermalWarm : m.userData.origMat; });
+            thermalChestMeshes.forEach(m => { m.material = enable ? matThermalCool : m.userData.origMat; });
+            thermalActuatorMeshes.forEach(m => { m.material = enable ? matThermalHot : m.userData.origMat; });
+        }
+
+        btnStance.addEventListener('click', () => setMode('stance', btnStance));
+        btnExploded.addEventListener('click', () => setMode('exploded', btnExploded));
+        btnDeadlift.addEventListener('click', () => setMode('deadlift', btnDeadlift));
+        btnSprint.addEventListener('click', () => setMode('sprint', btnSprint));
+        btnBmw.addEventListener('click', () => setMode('bmw', btnBmw));
+        btnStairs.addEventListener('click', () => setMode('stairs', btnStairs));
+        btnCart.addEventListener('click', () => setMode('cart', btnCart));
+        btnOil.addEventListener('click', () => setMode('oil', btnOil));
+        btnTrip.addEventListener('click', () => setMode('trip', btnTrip));
+        btnSidestep.addEventListener('click', () => setMode('sidestep', btnSidestep));
+        btnThermal.addEventListener('click', () => setMode('thermal', btnThermal));
+        btnActuator.addEventListener('click', () => setMode('actuator', btnActuator));
+        btnPushstep.addEventListener('click', () => setMode('pushstep', btnPushstep));
+        btnDoor.addEventListener('click', () => setMode('door', btnDoor));
+        btnUneven.addEventListener('click', () => setMode('uneven', btnUneven));
+        btnGantry.addEventListener('click', () => setMode('gantry', btnGantry));
+
+        // Sliders driving true joint hierarchy!
+        const sliderTorso = document.getElementById('slider-torso');
+        const sliderArm = document.getElementById('slider-arm');
+        const sliderKnee = document.getElementById('slider-knee');
+
+        sliderTorso.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            document.getElementById('txt-torso-pitch').innerText = `${val}°`;
+            manualTorsoRad = THREE.MathUtils.degToRad(val);
+        });
+
+        sliderArm.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            document.getElementById('txt-left-arm').innerText = `${val}°`;
+            manualArmRad = THREE.MathUtils.degToRad(val);
+        });
+
+        sliderKnee.addEventListener('input', (e) => {
+            const val = parseFloat(e.target.value);
+            document.getElementById('txt-knee').innerText = `${val}°`;
+            manualKneeRad = THREE.MathUtils.degToRad(val);
+        });
+
+        // Tabs
+        const tabBtnSim = document.getElementById('tab-btn-sim');
+        const tabBtnGait = document.getElementById('tab-btn-gait');
+        const tabBtnBom = document.getElementById('tab-btn-bom');
+        const tabBtnNeural = document.getElementById('tab-btn-neural');
+        const tabContentSim = document.getElementById('tab-content-sim');
+        const tabContentGait = document.getElementById('tab-content-gait');
+        const tabContentBom = document.getElementById('tab-content-bom');
+        const tabContentNeural = document.getElementById('tab-content-neural');
+
+        function switchTab(btn, content) {
+            [tabBtnSim, tabBtnGait, tabBtnBom, tabBtnNeural].forEach(b => b.classList.remove('active'));
+            [tabContentSim, tabContentGait, tabContentBom, tabContentNeural].forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            content.classList.add('active');
+        }
+
+        tabBtnSim.addEventListener('click', () => switchTab(tabBtnSim, tabContentSim));
+        tabBtnGait.addEventListener('click', () => switchTab(tabBtnGait, tabContentGait));
+        tabBtnBom.addEventListener('click', () => switchTab(tabBtnBom, tabContentBom));
+        tabBtnNeural.addEventListener('click', () => switchTab(tabBtnNeural, tabContentNeural));
+
+        // BOM Volume Slider
+        document.getElementById('slider-bom').addEventListener('input', (e) => {
+            const vol = parseInt(e.target.value);
+            document.getElementById('txt-bom-vol').innerText = `${vol.toLocaleString()} units/yr`;
+            const b_learning = Math.log(17878 / 60320) / Math.log(50000 / 1000);
+            const cost = 60320 * Math.pow(vol / 1000, b_learning);
+            document.getElementById('txt-bom-cost').innerText = `$${Math.round(cost).toLocaleString()} USD`;
+        });
+
+        // Bottom Deck
+        const btnAutoRotate = document.getElementById('btn-auto-rotate');
+        btnAutoRotate.addEventListener('click', () => {
+            autoOrbit = !autoOrbit;
+            btnAutoRotate.innerText = `Auto-Orbit: ${autoOrbit ? 'ON' : 'OFF'}`;
+            btnAutoRotate.classList.toggle('highlight', autoOrbit);
+        });
+
+        let isSafetyZones = false;
+        const btnSafety = document.getElementById('btn-safety');
+        btnSafety.addEventListener('click', () => {
+            isSafetyZones = !isSafetyZones;
+            safetyGroup.visible = isSafetyZones;
+            btnSafety.classList.toggle('highlight', isSafetyZones);
+            btnSafety.innerText = `ISO 15066: ${isSafetyZones ? 'ON' : 'OFF'}`;
+        });
+
+        const btnWireframe = document.getElementById('btn-wireframe');
+        btnWireframe.addEventListener('click', () => {
+            isWireframe = !isWireframe;
+            allWireframeMats.forEach(m => { m.wireframe = isWireframe; });
+            btnWireframe.classList.toggle('highlight', isWireframe);
+        });
+
+        function setCameraView(viewKey) {
+            const p = viewPresets[viewKey] || viewPresets.hero;
+            camera.position.set(...p.pos);
+            controls.target.set(...p.tgt);
+            controls.update();
+            ['hero', 'head', 'side', 'back', 'feet'].forEach(k => {
+                const b = document.getElementById(`btn-cam-${k}`);
+                if (b) b.classList.toggle('highlight', k === viewKey);
+            });
+        }
+
+        document.getElementById('btn-reset-cam').addEventListener('click', () => {
+            const camWide = ['sprint', 'cart', 'oil', 'stairs', 'trip', 'sidestep', 'pushstep', 'door', 'uneven', 'gantry'].includes(currentMode);
+            if (camWide) {
+                camera.position.set(2.30, 1.42, 2.90);
+                controls.target.set(0, 0.88, 0);
+            } else {
+                setCameraView('hero');
+            }
+        });
+
+        // Finish, Studio, Showcase HUD & Quick Camera Listeners
+        ['pearl', 'stealth', 'chrome'].forEach(k => {
+            const b = document.getElementById(`btn-finish-${k}`);
+            if (b) b.addEventListener('click', () => applyFinish(k));
+        });
+        const btnStudioToggle = document.getElementById('btn-studio-toggle');
+        if (btnStudioToggle) {
+            btnStudioToggle.addEventListener('click', () => applyStudio(activeStudio === 'noir' ? 'lab' : 'noir'));
+        }
+        const btnToggleHud = document.getElementById('btn-toggle-hud');
+        if (btnToggleHud) {
+            btnToggleHud.addEventListener('click', () => {
+                const hidden = document.body.classList.toggle('hud-hidden');
+                btnToggleHud.classList.toggle('highlight', hidden);
+                btnToggleHud.innerText = hidden ? 'Show HUD' : 'Showcase';
+            });
+        }
+        ['hero', 'head', 'side', 'back', 'feet'].forEach(k => {
+            const b = document.getElementById(`btn-cam-${k}`);
+            if (b) {
+                b.classList.toggle('highlight', k === urlView);
+                b.addEventListener('click', () => {
+                    autoOrbit = false;
+                    btnAutoRotate.innerText = 'Auto-Orbit: OFF';
+                    btnAutoRotate.classList.remove('highlight');
+                    setCameraView(k);
+                });
+            }
+        });
+
+        const sensorNodes = ['sn-1','sn-2','sn-3','sn-4','sn-5'].map(id => document.getElementById(id));
+        const _vHandL = new THREE.Vector3();
+        const _vHandR = new THREE.Vector3();
+
+        function applyHandGrasp(curlFrac) {
+            const c = Math.max(0.0, Math.min(1.0, curlFrac));
+            armJoints.forEach(a => {
+                a.fingerPivots.forEach(({ fProx, fMid, fDist, side, bias }) => {
+                    const fc = Math.min(1.0, c + (bias || 0) * (1.0 - 0.5 * c));
+                    fProx.rotation.z = -side * fc * 0.92;
+                    if (fMid) fMid.rotation.z = -side * fc * 1.05;
+                    fDist.rotation.z = -side * fc * 0.78;
+                });
+                const ts = a.fingerPivots[0].side;
+                a.thumbProx.rotation.z = -ts * (0.30 + 0.52 * c);
+                a.thumbDist.rotation.z = -ts * (0.48 * c);
+            });
+        }
+
+        function applySquatPose(kneeAngleRad, torsoRad, armPitchRad) {
+            // Exact kinematic drop for 0.430m thigh + 0.413m shin = 0.843m -> sole stays flush on y = 0.000!
+            const halfKnee = kneeAngleRad * 0.5;
+            const yDrop = 0.843 * (1.0 - Math.cos(halfKnee));
+            robotRoot.position.y = -yDrop;
+            legJoints.forEach(l => {
+                l.hipPivot.rotation.x = -halfKnee;
+                l.kneePivot.rotation.x = kneeAngleRad;
+                l.anklePivot.rotation.x = -halfKnee;
+            });
+            torsoPivot.rotation.x = torsoRad;
+            armJoints.forEach(a => {
+                a.shoulderPivot.rotation.x = armPitchRad;
+                a.elbowPivot.rotation.x = -0.22;
+            });
+        }
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+            animClock += 0.03;
+
+            const targetExploded = (currentMode === 'exploded') ? 1.0 : 0.0;
+            explodedLerp += (targetExploded - explodedLerp) * 0.08;
+            explodedParts.forEach(part => {
+                part.position.lerpVectors(part.userData.normalPos, part.userData.explodedPos, explodedLerp);
+            });
+
+            const baseGrasp = (currentMode === 'deadlift' || currentMode === 'bmw' || currentMode === 'cart')
+                ? 0.88
+                : (currentMode === 'door' ? 0.40 : 0.18 + (currentMode === 'stance' ? 0.05 * Math.sin(animClock * 1.2) : 0));
+            applyHandGrasp(baseGrasp);
+
+            // Gen-14 Living Telemetry (GLSL Volumetric Core, Precision Optical Horizon Scanner, Minimal Stage Rings)
+            coreShaderUniforms.uTime.value = animClock;
+            chestReactorRing.rotation.z += 0.022;
+            stageRotatorRing.rotation.y += 0.0018;
+            outerHoloRing.rotation.y -= 0.0012;
+            ambientParticles.rotation.y += 0.0008;
+
+            const scanPhi = Math.sin(animClock * 1.45) * 0.48;
+            const scanF = evalProfileFrame(headProf, 0.566 + Math.pow(Math.abs(scanPhi), 1.4) * 0.035, scanPhi);
+            visorScanDot.position.set(
+                scanF.p[0] + scanF.n[0] * 0.004,
+                scanF.p[1] + scanF.n[1] * 0.004,
+                scanF.p[2] + scanF.n[2] * 0.004
+            );
+            if (typeof corePointLight !== 'undefined') {
+                corePointLight.intensity = 0.65 + 0.25 * Math.sin(animClock * 2.2);
+            }
+
+            if (currentMode === 'stance' || currentMode === 'thermal' || currentMode === 'exploded') {
+                const breatheKnee = manualKneeRad + 0.085 + Math.sin(animClock * 1.1) * 0.014;
+                applySquatPose(breatheKnee, manualTorsoRad - 0.024 + 0.012 * Math.sin(animClock * 1.1), manualArmRad + 0.03);
+                headGroup.rotation.set(0.028 + Math.sin(animClock * 0.75) * 0.020, Math.sin(animClock * 0.42) * 0.10, 0);
+                legJoints.forEach(l => { l.hipPivot.rotation.y = (l.side || 1) * 0.085; });
+                armJoints.forEach((a, idx) => {
+                    const s = idx === 0 ? -1 : 1;
+                    a.shoulderPivot.rotation.z = s * 0.132;
+                    a.elbowPivot.rotation.x = -0.28;
+                    a.elbowPivot.rotation.y = -s * 0.08;
+                });
+            } else {
+                headGroup.rotation.set(0, 0, 0);
+                legJoints.forEach(l => { l.hipPivot.rotation.y = 0; });
+                armJoints.forEach((a, idx) => {
+                    a.shoulderPivot.rotation.z = (idx === 0 ? -1 : 1) * 0.122;
+                    a.elbowPivot.rotation.y = 0;
+                });
+            }
+            if (currentMode === 'deadlift') {
+                const liftPhase = (Math.sin(animClock * 1.8) + 1.0) * 0.5;
+                const kneeA = 0.25 + liftPhase * 0.95;
+                applySquatPose(kneeA, 0.35 * liftPhase, -0.45 * liftPhase);
+                robotRoot.updateMatrixWorld(true);
+                armJoints[0].hand.getWorldPosition(_vHandL);
+                armJoints[1].hand.getWorldPosition(_vHandR);
+                payloadGroup.position.lerpVectors(_vHandL, _vHandR, 0.5);
+                payloadGroup.rotation.set(0.15 * liftPhase, 0, 0);
+            } else if (currentMode === 'bmw') {
+                const taktPhase = (animClock * 0.9);
+                const reach = (Math.sin(taktPhase) + 1.0) * 0.5;
+                applySquatPose(0.25 + reach * 0.45, reach * 0.30, -0.35 - reach * 0.65);
+                robotRoot.updateMatrixWorld(true);
+                armJoints[0].hand.getWorldPosition(_vHandL);
+                armJoints[1].hand.getWorldPosition(_vHandR);
+                payloadGroup.position.lerpVectors(_vHandL, _vHandR, 0.5);
+                payloadGroup.rotation.set(0, Math.sin(taktPhase) * 0.25, 0);
+            } else if (currentMode === 'sprint') {
+                const phase = animClock * 4.5;
+                robotRoot.position.y = Math.abs(Math.sin(phase)) * 0.035 - 0.04;
+                legJoints[0].hipPivot.rotation.x = -Math.sin(phase) * 0.55;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.15, Math.sin(phase + 0.8) * 0.85);
+                legJoints[0].anklePivot.rotation.x = -0.15;
+                legJoints[1].hipPivot.rotation.x = Math.sin(phase) * 0.55;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.15, -Math.sin(phase + 0.8) * 0.85);
+                legJoints[1].anklePivot.rotation.x = -0.15;
+                armJoints[0].shoulderPivot.rotation.x = Math.sin(phase) * 0.65;
+                armJoints[0].elbowPivot.rotation.x = -0.75;
+                armJoints[1].shoulderPivot.rotation.x = -Math.sin(phase) * 0.65;
+                armJoints[1].elbowPivot.rotation.x = -0.75;
+            } else if (currentMode === 'cart') {
+                const phase = animClock * 2.2;
+                const surge = Math.sin(phase * 0.5) * 0.14;
+                robotRoot.position.set(0, -0.04, surge);
+                torsoPivot.rotation.x = 0.08;
+                legJoints[0].hipPivot.rotation.x = -0.25 - Math.sin(phase) * 0.30;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.25, 0.55 + Math.sin(phase + 0.6) * 0.35);
+                legJoints[0].anklePivot.rotation.x = -0.22;
+                legJoints[1].hipPivot.rotation.x = -0.25 + Math.sin(phase) * 0.30;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.25, 0.55 - Math.sin(phase + 0.6) * 0.35);
+                legJoints[1].anklePivot.rotation.x = -0.22;
+                armJoints.forEach(a => {
+                    a.shoulderPivot.rotation.x = -0.78;
+                    a.elbowPivot.rotation.x = -0.45;
+                });
+                cartGroup.position.set(0, 0, 0.72 + surge);
+            } else if (currentMode === 'oil') {
+                const phase = animClock * 2.1;
+                robotRoot.position.set(0, -0.06, Math.sin(phase * 0.5) * 0.12);
+                legJoints[0].hipPivot.rotation.x = -0.22 - Math.sin(phase) * 0.18;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.32, 0.58 + Math.sin(phase + 0.6) * 0.25);
+                legJoints[0].anklePivot.rotation.x = -0.28;
+                legJoints[1].hipPivot.rotation.x = -0.22 + Math.sin(phase) * 0.18;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.32, 0.58 - Math.sin(phase + 0.6) * 0.25);
+                legJoints[1].anklePivot.rotation.x = -0.28;
+                armJoints[0].shoulderPivot.rotation.x = Math.sin(phase) * 0.25;
+                armJoints[1].shoulderPivot.rotation.x = -Math.sin(phase) * 0.25;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.55; });
+            } else if (currentMode === 'stairs') {
+                const phase = animClock * 2.4;
+                const climb = (Math.sin(phase * 0.5) + 1.0) * 0.5;
+                robotRoot.position.set(0, climb * 0.14 - 0.03, climb * 0.62 - 0.12);
+                legJoints[0].hipPivot.rotation.x = -0.28 - Math.sin(phase) * 0.42;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.20, 0.65 + Math.sin(phase + 0.7) * 0.55);
+                legJoints[0].anklePivot.rotation.x = -0.25;
+                legJoints[1].hipPivot.rotation.x = -0.28 + Math.sin(phase) * 0.42;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.20, 0.65 - Math.sin(phase + 0.7) * 0.55);
+                legJoints[1].anklePivot.rotation.x = -0.25;
+                armJoints[0].shoulderPivot.rotation.x = Math.sin(phase) * 0.35;
+                armJoints[1].shoulderPivot.rotation.x = -Math.sin(phase) * 0.35;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.45; });
+            } else if (currentMode === 'trip') {
+                const phase = animClock * 3.0;
+                robotRoot.position.set(0, Math.abs(Math.sin(phase)) * 0.035 - 0.03, Math.sin(phase * 0.5) * 0.14);
+                legJoints[0].hipPivot.rotation.x = -Math.sin(phase) * 0.62;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.20, Math.sin(phase + 0.9) * 1.15);
+                legJoints[0].anklePivot.rotation.x = -0.25;
+                legJoints[1].hipPivot.rotation.x = Math.sin(phase) * 0.62;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.20, -Math.sin(phase + 0.9) * 1.15);
+                legJoints[1].anklePivot.rotation.x = -0.25;
+                armJoints[0].shoulderPivot.rotation.x = Math.sin(phase) * 0.45;
+                armJoints[1].shoulderPivot.rotation.x = -Math.sin(phase) * 0.45;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.55; });
+            } else if (currentMode === 'sidestep') {
+                const phase = animClock * 2.5;
+                const shuttle = Math.sin(phase * 0.35) * 0.38;
+                robotRoot.position.set(shuttle, -0.05 + Math.abs(Math.sin(phase)) * 0.025, 0);
+                legJoints[0].hipPivot.rotation.z = Math.max(0.02, Math.sin(phase) * 0.24 + 0.12);
+                legJoints[0].hipPivot.rotation.x = -0.25;
+                legJoints[0].kneePivot.rotation.x = 0.50;
+                legJoints[0].anklePivot.rotation.x = -0.25;
+                legJoints[1].hipPivot.rotation.z = -Math.max(0.02, -Math.sin(phase) * 0.24 + 0.12);
+                legJoints[1].hipPivot.rotation.x = -0.25;
+                legJoints[1].kneePivot.rotation.x = 0.50;
+                legJoints[1].anklePivot.rotation.x = -0.25;
+                armJoints.forEach(a => { a.shoulderPivot.rotation.x = -0.15; a.elbowPivot.rotation.x = -0.45; });
+            } else if (currentMode === 'pushstep') {
+                const cycleLen = 4.0;
+                const dirIdx = Math.floor((animClock * 0.45) / cycleLen) % 4;
+                const u = ((animClock * 0.45) % cycleLen) / cycleLen;
+                const impact = Math.exp(-Math.pow((u - 0.22) / 0.09, 2));
+                const lunge = Math.sin(Math.min(1.0, Math.max(0.0, (u - 0.18) / 0.65)) * Math.PI);
+                const dirs = [
+                    { dx: 0, dz: 1, yaw: 0 },
+                    { dx: 0, dz: -1, yaw: Math.PI },
+                    { dx: 1, dz: 0, yaw: Math.PI / 2 },
+                    { dx: -1, dz: 0, yaw: -Math.PI / 2 }
+                ];
+                const d = dirs[dirIdx];
+                robotRoot.position.set(d.dx * lunge * 0.24, -0.05 - 0.03 * lunge, d.dz * lunge * 0.24);
+                torsoPivot.rotation.set(d.dz * impact * 0.22, 0, -d.dx * impact * 0.20);
+                legJoints[0].hipPivot.rotation.x = -0.28 - (d.dz !== 0 ? d.dz * lunge * 0.46 : 0);
+                legJoints[0].hipPivot.rotation.z = d.dx > 0 ? lunge * 0.34 : 0.06;
+                legJoints[0].kneePivot.rotation.x = 0.56 + lunge * 0.24;
+                legJoints[0].anklePivot.rotation.x = -0.28;
+                legJoints[1].hipPivot.rotation.x = -0.28 + (d.dz !== 0 ? d.dz * lunge * 0.22 : 0);
+                legJoints[1].hipPivot.rotation.z = d.dx < 0 ? -lunge * 0.34 : -0.06;
+                legJoints[1].kneePivot.rotation.x = 0.56;
+                legJoints[1].anklePivot.rotation.x = -0.28;
+                armJoints[0].shoulderPivot.rotation.x = -0.25 - impact * 0.45;
+                armJoints[1].shoulderPivot.rotation.x = -0.25 + impact * 0.35;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.55; });
+                dcmRingMesh.position.set(d.dx * (0.16 + 0.26 * lunge), 0.012, d.dz * (0.16 + 0.26 * lunge));
+                const ringScale = 0.85 + 0.28 * Math.sin(animClock * 6.0);
+                dcmRingMesh.scale.set(ringScale, ringScale, 1);
+                pushArrowGroup.visible = (u > 0.08 && u < 0.42);
+                pushArrowGroup.rotation.set(0, d.yaw, 0);
+                pushArrowGroup.position.set(-d.dx * (0.62 - 0.14 * impact), 1.26, -d.dz * (0.62 - 0.14 * impact));
+            } else if (currentMode === 'door') {
+                const cyc = (animClock * 0.25) % 1.0;
+                const walkProg = Math.min(1.0, cyc / 0.65);
+                const zPos = -0.15 + walkProg * 1.85;
+                const phase = animClock * 3.0;
+                const walkAmp = cyc < 0.64 ? 1.0 : 0.0;
+                robotRoot.position.set(Math.sin(Math.min(Math.PI, walkProg * Math.PI)) * -0.06, Math.abs(Math.sin(phase)) * 0.03 * walkAmp - 0.04, zPos);
+                torsoPivot.rotation.set(walkAmp * 0.12, 0, 0);
+                legJoints[0].hipPivot.rotation.x = -Math.sin(phase) * 0.42 * walkAmp - 0.22;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.20, 0.44 + Math.sin(phase + 0.7) * 0.45 * walkAmp);
+                legJoints[0].anklePivot.rotation.x = -0.22;
+                legJoints[1].hipPivot.rotation.x = Math.sin(phase) * 0.42 * walkAmp - 0.22;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.20, 0.44 - Math.sin(phase + 0.7) * 0.45 * walkAmp);
+                legJoints[1].anklePivot.rotation.x = -0.22;
+                const reachOut = cyc < 0.50 ? Math.sin(Math.min(1.0, cyc / 0.18) * Math.PI * 0.5) : Math.max(0.0, 1.0 - (cyc - 0.50) / 0.12);
+                armJoints[0].shoulderPivot.rotation.x = -0.25 - 1.08 * reachOut;
+                armJoints[1].shoulderPivot.rotation.x = -0.25 - 0.95 * (cyc < 0.32 ? reachOut : 0.0);
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.35 + 0.25 * reachOut; });
+                const doorOpenFrac = cyc < 0.14 ? 0.0 : (cyc < 0.30 ? (cyc - 0.14) / 0.16 : (cyc < 0.46 ? 1.0 : Math.max(0.02, 1.0 - (cyc - 0.46) / 0.44)));
+                doorLeafPivot.rotation.y = doorOpenFrac * THREE.MathUtils.degToRad(92.0);
+            } else if (currentMode === 'uneven') {
+                const cyc = (animClock * 0.22) % 1.0;
+                const zPos = -0.10 + cyc * 2.35;
+                const phase = animClock * 3.2;
+                const stepH = 0.032 + 0.026 * Math.sin(zPos * 3.4);
+                robotRoot.position.set(0.0, stepH + Math.abs(Math.sin(phase)) * 0.028 - 0.035, zPos);
+                torsoPivot.rotation.set(0.05 + 0.03 * Math.sin(phase * 0.7), 0, 0.04 * Math.cos(phase * 0.8));
+                legJoints[0].hipPivot.rotation.x = -Math.sin(phase) * 0.50 - 0.25;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.22, 0.52 + Math.sin(phase + 0.8) * 0.62);
+                legJoints[0].anklePivot.rotation.x = -0.25 + 0.12 * Math.sin(zPos * 4.2);
+                legJoints[0].anklePivot.rotation.z = 0.13 * Math.cos(zPos * 5.1);
+                legJoints[1].hipPivot.rotation.x = Math.sin(phase) * 0.50 - 0.25;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.22, 0.52 - Math.sin(phase + 0.8) * 0.62);
+                legJoints[1].anklePivot.rotation.x = -0.25 - 0.12 * Math.sin(zPos * 4.2);
+                legJoints[1].anklePivot.rotation.z = -0.13 * Math.cos(zPos * 5.1);
+                armJoints[0].shoulderPivot.rotation.x = Math.sin(phase) * 0.35;
+                armJoints[1].shoulderPivot.rotation.x = -Math.sin(phase) * 0.35;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.52; });
+            } else if (currentMode === 'gantry') {
+                const cyc = (animClock * 0.22) % 1.0;
+                const zPos = -0.05 + cyc * 2.25;
+                const phase = animClock * 3.0;
+                const enterU = Math.min(1.0, Math.max(0.0, (zPos - 0.15) / 0.45));
+                const exitU = Math.min(1.0, Math.max(0.0, (zPos - 1.65) / 0.40));
+                const duckU = enterU * (1.0 - exitU);
+                const yCrouchDrop = 0.18 * duckU;
+                robotRoot.position.set(0.0, -yCrouchDrop + Math.abs(Math.sin(phase)) * 0.025 - 0.03, zPos);
+                torsoPivot.rotation.set(0.56 * duckU, 0, 0);
+                legJoints[0].hipPivot.rotation.x = -0.25 - 0.42 * duckU - Math.sin(phase) * 0.38;
+                legJoints[0].kneePivot.rotation.x = Math.max(0.22, 0.50 + 0.85 * duckU + Math.sin(phase + 0.7) * 0.42);
+                legJoints[0].anklePivot.rotation.x = -0.25 - 0.43 * duckU;
+                legJoints[1].hipPivot.rotation.x = -0.25 - 0.42 * duckU + Math.sin(phase) * 0.38;
+                legJoints[1].kneePivot.rotation.x = Math.max(0.22, 0.50 + 0.85 * duckU - Math.sin(phase + 0.7) * 0.42);
+                legJoints[1].anklePivot.rotation.x = -0.25 - 0.43 * duckU;
+                armJoints[0].shoulderPivot.rotation.x = 0.34 * duckU + Math.sin(phase) * 0.28;
+                armJoints[1].shoulderPivot.rotation.x = 0.34 * duckU - Math.sin(phase) * 0.28;
+                armJoints.forEach(a => { a.elbowPivot.rotation.x = -0.55; });
+            }
+
+            if (currentMode === 'actuator') {
+                const omegaSun = 0.05;
+                const ratio = 5.0;
+                const omegaCarrier = omegaSun / ratio;
+                sunPivot.rotation.y += omegaSun;
+                planetCarrier.rotation.y += omegaCarrier;
+                planetGears.forEach(p => {
+                    p.rotation.y -= (64 / 24) * omegaCarrier;
+                });
+            }
+
+            sensorNodes.forEach((node, idx) => {
+                if (node) {
+                    const val = (Math.sin(animClock * 4.0 + idx) + 1.0) / 2.0;
+                    node.style.background = `rgba(56, 189, 248, ${0.10 + val * 0.42})`;
+                }
+            });
+
+            controls.autoRotate = autoOrbit;
+            controls.autoRotateSpeed = 0.72;
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
+</body>
+</html>

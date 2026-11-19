@@ -1,0 +1,17 @@
+Category,Component,Qty,UnitCost_1k,UnitCost_10k,UnitCost_50k,Total_1k,Total_10k,Total_50k
+Actuation,"Class Gamma Actuator (Hip, Knee, Lumbar - 510 Nm)",12,1150.0,540.0,310.0,13800.0,6480.0,3720.0
+Actuation,"Class Beta Actuator (Shoulder, Elbow, Ankle - 220 Nm)",16,750.0,360.0,205.0,12000.0,5760.0,3280.0
+Actuation,"Class Alpha Actuator (Neck, Wrist, Forearm - 55 Nm)",8,380.0,190.0,115.0,3040.0,1520.0,920.0
+Actuation,Apex-Dex Micro-Tendon Actuators (In-Metacarpal),20,160.0,75.0,42.0,3200.0,1500.0,840.0
+Power,2.2 kWh Structural Pelvis Monocoque (4680 Arrays),1,3600.0,1850.0,1200.0,3600.0,1850.0,1200.0
+Power,Integrated 800V GaN Distribution PDU & Inverters,1,2200.0,1100.0,720.0,2200.0,1100.0,720.0
+Power,Active Regenerative Braking Unit & Bidirectional DC-DC,1,880.0,440.0,280.0,880.0,440.0,280.0
+Compute,Dual Drive Thor SoCs (2000 TFLOPS FP8) + Carrier Board,1,3900.0,2600.0,1850.0,3900.0,2600.0,1850.0
+Compute,Dual Lockstep Cortex-R82 Real-Time Microkernel Board,1,780.0,390.0,240.0,780.0,390.0,240.0
+Perception,Wide-Baseline Stereo RGB-D RealSense Arrays (Head & Torso),4,340.0,170.0,105.0,1360.0,680.0,420.0
+Perception,Apex-Dex GelSkin Optical-Tactile Finger Arrays (120 Hz),10,210.0,95.0,58.0,2100.0,950.0,580.0
+Perception,Dual BiSS-C 20-Bit Absolute Encoders & 6-Axis IMUs,36,110.0,48.0,28.0,3960.0,1728.0,1008.0
+Structure,Topologically Optimized 7075-T6 Unibody Castings,1,4400.0,2100.0,1280.0,4400.0,2100.0,1280.0
+Structure,Compression-Molded Carbon Fiber Exterior Fairings,1,2600.0,1300.0,790.0,2600.0,1300.0,790.0
+Structure,Titanium Ti-6Al-4V Joint Pivot Spindles & Hardware,1,1450.0,750.0,440.0,1450.0,750.0,440.0
+Harnessing,Single-Pair Ethernet (1000BASE-T1) SPE Slip-Ring Bus,1,1050.0,520.0,310.0,1050.0,520.0,310.0

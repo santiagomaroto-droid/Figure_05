@@ -1,0 +1,14 @@
+{
+    "physics_engine": "MuJoCo 3.6.0",
+    "total_robot_mass_kg": 54.5,
+    "skyhook_forces_used": false,
+    "perturbation_magnitude_newtons": 120.0,
+    "perturbation_duration_ms": 120,
+    "peak_roll_deviation_deg": 9.98,
+    "final_steady_state_roll_deg": 0.01,
+    "settling_time_seconds": 0.66,
+    "peak_knee_torque_nm": 46.4,
+    "steady_state_total_grf_n": 534.5,
+    "pelvis_steady_state_height_m": 0.939,
+    "standing_stability_confirmed": true
+}

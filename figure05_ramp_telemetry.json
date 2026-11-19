@@ -1,0 +1,13 @@
+{
+    "engine": "MuJoCo 3.6.0",
+    "skyhook_force_n": 0.0,
+    "ramp_angle_deg": 10.0,
+    "ramp_grade_percent": 17.6,
+    "duration_s": 7.0,
+    "distance_walked_m": 1.917,
+    "elevation_gain_m": 0.293,
+    "steady_rms_roll_deg": 2.03,
+    "steady_rms_pitch_deg": 2.02,
+    "min_height_above_slope_m": 0.888,
+    "completed_without_fall": true
+}

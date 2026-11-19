@@ -1,0 +1,21 @@
+{
+    "physics_engine": "MuJoCo 3.6.0 (Real Parallel Rollouts)",
+    "causal_blind_nominal_wbc": true,
+    "randomized_environments_count": 96,
+    "zero_shot_sim2real_transfer_rate_pct": 97.9,
+    "mean_tracking_error_deg": 1.64,
+    "worst_case_survivor_error_deg": 3.65,
+    "friction_randomization_range": [
+        0.251,
+        1.35
+    ],
+    "mass_randomization_range_kg": [
+        46.61,
+        63.89
+    ],
+    "push_impulse_range_newtons": [
+        45.5,
+        145.0
+    ],
+    "wall_clock_simulation_seconds": 29.84
+}

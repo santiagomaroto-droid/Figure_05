@@ -1,0 +1,206 @@
+{
+    "project": "Figure 05 Apex Humanoid",
+    "release_version": "13.0.0",
+    "lead_researcher": "Santiago Maroto",
+    "qa_date_utc": "2026-11-19T21:19:13Z",
+    "runtime_versions": {
+        "python": "3.12.10",
+        "numpy": "2.4.3",
+        "scipy": "1.15.3",
+        "pandas": "2.3.3",
+        "matplotlib": "3.10.8",
+        "mujoco": "3.6.0"
+    },
+    "overall_status": "CERTIFIED_VALIDATED",
+    "total_subsystems_tested": 31,
+    "tests_passed": 31,
+    "total_test_duration_seconds": 263.53,
+    "detailed_test_matrix": [
+        {
+            "subsystem": "CAD Involute STL Generator",
+            "script": "generate_actuator_stl.py",
+            "passed": true,
+            "execution_time_seconds": 3.99
+        },
+        {
+            "subsystem": "56-DoF Kinematic URDF Generator",
+            "script": "generate_urdf.py",
+            "passed": true,
+            "execution_time_seconds": 0.26
+        },
+        {
+            "subsystem": "Dynamics & Thermal LPTN",
+            "script": "figure05_dynamics_sim.py",
+            "passed": true,
+            "execution_time_seconds": 4.56
+        },
+        {
+            "subsystem": "AGMA Gear Stress & Bearings",
+            "script": "actuator_class_gamma_stress_analysis.py",
+            "passed": true,
+            "execution_time_seconds": 5.51
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Skyhook-Free WBC",
+            "script": "simulate_figure05_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.17
+        },
+        {
+            "subsystem": "MuJoCo 3.6 360-Deg Capture-Point Push Recovery",
+            "script": "simulate_push_recovery_stepping_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 13.95
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Skyhook-Free Walking",
+            "script": "simulate_walking_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.92
+        },
+        {
+            "subsystem": "MuJoCo 3.6 10-Deg Ramp Ascent",
+            "script": "simulate_ramp_walk_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.3
+        },
+        {
+            "subsystem": "MuJoCo 3.6 75mm Curb Step-Up",
+            "script": "simulate_stepup_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.28
+        },
+        {
+            "subsystem": "MuJoCo 3.6 -75mm Curb Step-Down",
+            "script": "simulate_stepdown_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.15
+        },
+        {
+            "subsystem": "MuJoCo 3.6 2-Step +140mm Stair Ascent",
+            "script": "simulate_stairs_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 8.11
+        },
+        {
+            "subsystem": "MuJoCo 3.6 2-Step -140mm Stair Descent & Regen",
+            "script": "simulate_stair_descent_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 8.6
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Blind Oil-Patch Slip Recovery",
+            "script": "simulate_slippery_walk_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 11.52
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Blind Obstacle Trip Reflex",
+            "script": "simulate_trip_recovery_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.8
+        },
+        {
+            "subsystem": "MuJoCo 3.6 15kg Tote Carry Walk",
+            "script": "simulate_loaded_walk_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 7.37
+        },
+        {
+            "subsystem": "MuJoCo 3.6 End-to-End 15kg Pick-Walk-Place",
+            "script": "simulate_locomanip_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 11.65
+        },
+        {
+            "subsystem": "MuJoCo 3.6 65.0kg Heavy Cart Bimanual Push",
+            "script": "simulate_cart_push_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 10.06
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Spring-Return Door Traversal",
+            "script": "simulate_door_traversal_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 14.5
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Blind Canted Uneven Terrain",
+            "script": "simulate_uneven_terrain_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 10.65
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Low-Clearance Gantry Duck-Walk",
+            "script": "simulate_gantry_duck_walk_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 15.59
+        },
+        {
+            "subsystem": "MuJoCo 3.6 100-Deg Aisle Turn Walk",
+            "script": "simulate_turning_walk_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 9.28
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Lateral Sidestep Shuttle",
+            "script": "simulate_lateral_sidestep_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 8.42
+        },
+        {
+            "subsystem": "MuJoCo 3.6 Skyhook-Free 45kg Deadlift",
+            "script": "simulate_deadlift_mujoco.py",
+            "passed": true,
+            "execution_time_seconds": 6.44
+        },
+        {
+            "subsystem": "ISO 15066 Safety & 1000BASE-T1 HIL",
+            "script": "simulate_safety_and_bus_hil.py",
+            "passed": true,
+            "execution_time_seconds": 5.77
+        },
+        {
+            "subsystem": "Kajita LQR Preview Gait & IK",
+            "script": "figure05_gait_generator.py",
+            "passed": true,
+            "execution_time_seconds": 6.18
+        },
+        {
+            "subsystem": "GelSkin Tactile Grasp Reflex",
+            "script": "figure05_tactile_grasp_sim.py",
+            "passed": true,
+            "execution_time_seconds": 4.17
+        },
+        {
+            "subsystem": "Dual Thor Neural Latency",
+            "script": "figure05_neural_stack.py",
+            "passed": true,
+            "execution_time_seconds": 3.14
+        },
+        {
+            "subsystem": "MuJoCo 96-World Sim2Real DR",
+            "script": "figure05_sim2real_domain_randomization.py",
+            "passed": true,
+            "execution_time_seconds": 34.78
+        },
+        {
+            "subsystem": "Automotive Takt Time & Reliability",
+            "script": "figure05_automotive_cycle_benchmark.py",
+            "passed": true,
+            "execution_time_seconds": 4.03
+        },
+        {
+            "subsystem": "Factory Scaling BOM Engine",
+            "script": "figure05_bom_factory_scaling.py",
+            "passed": true,
+            "execution_time_seconds": 4.68
+        },
+        {
+            "subsystem": "Cross-Artifact Digital Twin Auditor",
+            "script": "verify_digital_twin_consistency.py",
+            "passed": true,
+            "execution_time_seconds": 5.68
+        }
+    ]
+}

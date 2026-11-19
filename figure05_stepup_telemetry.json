@@ -1,0 +1,21 @@
+{
+  "module": "simulate_stepup_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 5.998,
+  "step_x_m": 0.34,
+  "step_height_mm": 75.0,
+  "forward_distance_m": 2.126,
+  "pelvis_z_start_m": 0.924,
+  "pelvis_z_end_m": 0.99,
+  "pelvis_climb_cm": 6.6,
+  "left_foot_final_z_mm": 74.3,
+  "right_foot_final_z_mm": 124.2,
+  "roll_rms_deg": 1.18,
+  "pitch_rms_deg": 4.05,
+  "peak_left_grf_n": 1000.8,
+  "peak_right_grf_n": 1043.6,
+  "peak_knee_torque_nm": 173.9,
+  "completed_without_fall": true,
+  "both_feet_mounted_upper_deck": true
+}

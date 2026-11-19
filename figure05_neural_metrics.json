@@ -1,0 +1,17 @@
+{
+    "vla_model_parameters": "7.2B",
+    "precision": "FP8 (TensorRT-LLM Quantized)",
+    "dual_thor_tflops": 2000.0,
+    "vla_context_tokens": 352,
+    "vla_mean_inference_ms": 7.35,
+    "vla_p99_inference_ms": 7.75,
+    "vla_frequency_hz": 50,
+    "wbc_monte_carlo_ticks": 10000,
+    "wbc_mean_microseconds": 781.9,
+    "wbc_p99_microseconds": 956.5,
+    "wbc_p999_microseconds": 979.4,
+    "wbc_max_microseconds": 990.5,
+    "wbc_deadline_misses": 0,
+    "wbc_safety_headroom_percent": 4.3,
+    "edge_slip_reflex_ms": 1.75
+}

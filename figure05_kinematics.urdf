@@ -1,0 +1,906 @@
+<?xml version="1.0" ?>
+<robot name="figure_05">
+  <material name="CarbonBlack">
+    <color rgba="0.08 0.08 0.09 1.0"/>
+  </material>
+  <material name="AnodizedCyan">
+    <color rgba="0.02 0.52 0.78 1.0"/>
+  </material>
+  <material name="PolishedTitanium">
+    <color rgba="0.65 0.68 0.72 1.0"/>
+  </material>
+  <material name="SensorGlass">
+    <color rgba="0.15 0.20 0.25 0.9"/>
+  </material>
+  <material name="SyntheticSkin">
+    <color rgba="0.12 0.14 0.18 1.0"/>
+  </material>
+  <link name="pelvis">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="8.8"/>
+      <inertia ixx="0.068347" ixy="0.0" ixz="0.0" iyy="0.061013" iyz="0.0" izz="0.091813"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.24 0.26 0.16"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.24 0.26 0.16"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="torso_yaw_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.2"/>
+      <inertia ixx="0.001301" ixy="0.0" ixz="0.0" iyy="0.001301" iyz="0.0" izz="0.001622"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.07"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="torso_yaw_joint" type="revolute">
+    <parent link="pelvis"/>
+    <child link="torso_yaw_link"/>
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.57" upper="1.57" effort="220" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="torso_pitch_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.4"/>
+      <inertia ixx="0.001518" ixy="0.0" ixz="0.0" iyy="0.001518" iyz="0.0" izz="0.001893"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.07"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="torso_pitch_joint" type="revolute">
+    <parent link="torso_yaw_link"/>
+    <child link="torso_pitch_link"/>
+    <origin xyz="0 0 0.08" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.6" upper="1.2" effort="350" velocity="3.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="upper_chest">
+    <inertial>
+      <origin xyz="0 0 0.18" rpy="0 0 0"/>
+      <mass value="9.8"/>
+      <inertia ixx="0.184322" ixy="0.0" ixz="0.0" iyy="0.169867" iyz="0.0" izz="0.142508"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.18" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.28 0.31 0.36"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.18" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.28 0.31 0.36"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="torso_roll_joint" type="revolute">
+    <parent link="torso_pitch_link"/>
+    <child link="upper_chest"/>
+    <origin xyz="0 0 0.06" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="220" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="neck_yaw_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.35"/>
+      <inertia ixx="0.000199" ixy="0.0" ixz="0.0" iyy="0.000199" iyz="0.0" izz="0.000253"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.038" length="0.05"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.038" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="neck_yaw_joint" type="revolute">
+    <parent link="upper_chest"/>
+    <child link="neck_yaw_link"/>
+    <origin xyz="0 0 0.38" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.8" upper="1.8" effort="35" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="head_pitch_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.05"/>
+      <inertia ixx="0.003791" ixy="0.0" ixz="0.0" iyy="0.003791" iyz="0.0" izz="0.003791"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.095"/>
+      </geometry>
+      <material name="SensorGlass"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="0.095"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="head_pitch_joint" type="revolute">
+    <parent link="neck_yaw_link"/>
+    <child link="head_pitch_link"/>
+    <origin xyz="0 0 0.06" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.8" upper="0.9" effort="35" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_shoulder_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.9"/>
+      <inertia ixx="0.000886" ixy="0.0" ixz="0.0" iyy="0.000886" iyz="0.0" izz="0.001037"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.07"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_pitch_joint" type="revolute">
+    <parent link="upper_chest"/>
+    <child link="left_shoulder_base"/>
+    <origin xyz="0 0.21 0.28" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.14" upper="2.0" effort="220" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_shoulder_roll_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.7"/>
+      <inertia ixx="0.000595" ixy="0.0" ixz="0.0" iyy="0.000595" iyz="0.0" izz="0.000617"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.07"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_roll_joint" type="revolute">
+    <parent link="left_shoulder_base"/>
+    <child link="left_shoulder_roll_link"/>
+    <origin xyz="0 0.04 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.4" upper="2.0" effort="220" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_upper_arm">
+    <inertial>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.007745" ixy="0.0" ixz="0.0" iyy="0.007745" iyz="0.0" izz="0.000842"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.26"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.26"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_yaw_joint" type="revolute">
+    <parent link="left_shoulder_roll_link"/>
+    <child link="left_upper_arm"/>
+    <origin xyz="0 0.03 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.5" upper="2.5" effort="140" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_elbow_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.000295" ixy="0.0" ixz="0.0" iyy="0.000295" iyz="0.0" izz="0.000289"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.034" length="0.06"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.034" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_elbow_joint" type="revolute">
+    <parent link="left_upper_arm"/>
+    <child link="left_elbow_link"/>
+    <origin xyz="0 0 -0.26" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.6" upper="0.0" effort="180" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_forearm">
+    <inertial>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <mass value="0.75"/>
+      <inertia ixx="0.003769" ixy="0.0" ixz="0.0" iyy="0.003769" iyz="0.0" izz="0.000338"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.24"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.24"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_forearm_roll_joint" type="revolute">
+    <parent link="left_elbow_link"/>
+    <child link="left_forearm"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="75" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_wrist_pitch_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.25"/>
+      <inertia ixx="8.2e-05" ixy="0.0" ixz="0.0" iyy="8.2e-05" iyz="0.0" izz="9.8e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.028" length="0.04"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.028" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_wrist_pitch_joint" type="revolute">
+    <parent link="left_forearm"/>
+    <child link="left_wrist_pitch_link"/>
+    <origin xyz="0 0 -0.24" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.4" upper="1.4" effort="55" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_hand_palm">
+    <inertial>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <mass value="0.75"/>
+      <inertia ixx="0.001197" ixy="0.0" ixz="0.0" iyy="0.000856" iyz="0.0" izz="0.000541"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.084 0.11"/>
+      </geometry>
+      <material name="SyntheticSkin"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.084 0.11"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_wrist_roll_joint" type="revolute">
+    <parent link="left_wrist_pitch_link"/>
+    <child link="left_hand_palm"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.2" upper="1.2" effort="55" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_shoulder_base">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.9"/>
+      <inertia ixx="0.000886" ixy="0.0" ixz="0.0" iyy="0.000886" iyz="0.0" izz="0.001037"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.07"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_pitch_joint" type="revolute">
+    <parent link="upper_chest"/>
+    <child link="right_shoulder_base"/>
+    <origin xyz="0 -0.21 0.28" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.14" upper="2.0" effort="220" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_shoulder_roll_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.7"/>
+      <inertia ixx="0.000595" ixy="0.0" ixz="0.0" iyy="0.000595" iyz="0.0" izz="0.000617"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.07"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.07"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_roll_joint" type="revolute">
+    <parent link="right_shoulder_base"/>
+    <child link="right_shoulder_roll_link"/>
+    <origin xyz="0 -0.04 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-2.0" upper="0.4" effort="220" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_upper_arm">
+    <inertial>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.007745" ixy="0.0" ixz="0.0" iyy="0.007745" iyz="0.0" izz="0.000842"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.26"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.13" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.26"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_yaw_joint" type="revolute">
+    <parent link="right_shoulder_roll_link"/>
+    <child link="right_upper_arm"/>
+    <origin xyz="0 -0.03 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.5" upper="2.5" effort="140" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_elbow_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.000295" ixy="0.0" ixz="0.0" iyy="0.000295" iyz="0.0" izz="0.000289"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.034" length="0.06"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.034" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_elbow_joint" type="revolute">
+    <parent link="right_upper_arm"/>
+    <child link="right_elbow_link"/>
+    <origin xyz="0 0 -0.26" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-2.6" upper="0.0" effort="180" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_forearm">
+    <inertial>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <mass value="0.75"/>
+      <inertia ixx="0.003769" ixy="0.0" ixz="0.0" iyy="0.003769" iyz="0.0" izz="0.000338"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.24"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.12" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.03" length="0.24"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_forearm_roll_joint" type="revolute">
+    <parent link="right_elbow_link"/>
+    <child link="right_forearm"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="75" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_wrist_pitch_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.25"/>
+      <inertia ixx="8.2e-05" ixy="0.0" ixz="0.0" iyy="8.2e-05" iyz="0.0" izz="9.8e-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.028" length="0.04"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.028" length="0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wrist_pitch_joint" type="revolute">
+    <parent link="right_forearm"/>
+    <child link="right_wrist_pitch_link"/>
+    <origin xyz="0 0 -0.24" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.4" upper="1.4" effort="55" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_hand_palm">
+    <inertial>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <mass value="0.75"/>
+      <inertia ixx="0.001197" ixy="0.0" ixz="0.0" iyy="0.000856" iyz="0.0" izz="0.000541"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.084 0.11"/>
+      </geometry>
+      <material name="SyntheticSkin"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.055" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.04 0.084 0.11"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wrist_roll_joint" type="revolute">
+    <parent link="right_wrist_pitch_link"/>
+    <child link="right_hand_palm"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-1.2" upper="1.2" effort="55" velocity="8.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_hip_yaw_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.1"/>
+      <inertia ixx="0.001074" ixy="0.0" ixz="0.0" iyy="0.001074" iyz="0.0" izz="0.001487"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_yaw_joint" type="revolute">
+    <parent link="pelvis"/>
+    <child link="left_hip_yaw_link"/>
+    <origin xyz="0 0.105 -0.08" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.2" upper="1.2" effort="240" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_hip_roll_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.001269" ixy="0.0" ixz="0.0" iyy="0.001269" iyz="0.0" izz="0.001758"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_roll_joint" type="revolute">
+    <parent link="left_hip_yaw_link"/>
+    <child link="left_hip_roll_link"/>
+    <origin xyz="0 0 -0.04" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.6" upper="0.4" effort="350" velocity="4.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_thigh">
+    <inertial>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <mass value="3.8"/>
+      <inertia ixx="0.052855" ixy="0.0" ixz="0.0" iyy="0.052855" iyz="0.0" izz="0.004378"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.4"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_pitch_joint" type="revolute">
+    <parent link="left_hip_roll_link"/>
+    <child link="left_thigh"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.8" upper="1.2" effort="510" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_shank">
+    <inertial>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <mass value="2.8"/>
+      <inertia ixx="0.038568" ixy="0.0" ixz="0.0" iyy="0.038568" iyz="0.0" izz="0.00247"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.4"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_knee_joint" type="revolute">
+    <parent link="left_thigh"/>
+    <child link="left_shank"/>
+    <origin xyz="0 0 -0.40" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.5" effort="510" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_ankle_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.000266" ixy="0.0" ixz="0.0" iyy="0.000266" iyz="0.0" izz="0.000324"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.05"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ankle_pitch_joint" type="revolute">
+    <parent link="left_shank"/>
+    <child link="left_ankle_link"/>
+    <origin xyz="0 0 -0.40" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.9" upper="0.9" effort="220" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="left_foot">
+    <inertial>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.002177" ixy="0.0" ixz="0.0" iyy="0.007497" iyz="0.0" izz="0.009327"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.26 0.136 0.04"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.26 0.136 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ankle_roll_joint" type="revolute">
+    <parent link="left_ankle_link"/>
+    <child link="left_foot"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="180" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_hip_yaw_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.1"/>
+      <inertia ixx="0.001074" ixy="0.0" ixz="0.0" iyy="0.001074" iyz="0.0" izz="0.001487"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_yaw_joint" type="revolute">
+    <parent link="pelvis"/>
+    <child link="right_hip_yaw_link"/>
+    <origin xyz="0 -0.105 -0.08" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.2" upper="1.2" effort="240" velocity="5.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_hip_roll_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.001269" ixy="0.0" ixz="0.0" iyy="0.001269" iyz="0.0" izz="0.001758"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.052" length="0.06"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_roll_joint" type="revolute">
+    <parent link="right_hip_yaw_link"/>
+    <child link="right_hip_roll_link"/>
+    <origin xyz="0 0 -0.04" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.4" upper="0.6" effort="350" velocity="4.5"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_thigh">
+    <inertial>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <mass value="3.8"/>
+      <inertia ixx="0.052855" ixy="0.0" ixz="0.0" iyy="0.052855" iyz="0.0" izz="0.004378"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.4"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.048" length="0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_pitch_joint" type="revolute">
+    <parent link="right_hip_roll_link"/>
+    <child link="right_thigh"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.8" upper="1.2" effort="510" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_shank">
+    <inertial>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <mass value="2.8"/>
+      <inertia ixx="0.038568" ixy="0.0" ixz="0.0" iyy="0.038568" iyz="0.0" izz="0.00247"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.4"/>
+      </geometry>
+      <material name="CarbonBlack"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.20" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.042" length="0.4"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_knee_joint" type="revolute">
+    <parent link="right_thigh"/>
+    <child link="right_shank"/>
+    <origin xyz="0 0 -0.40" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.5" effort="510" velocity="4.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_ankle_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.5"/>
+      <inertia ixx="0.000266" ixy="0.0" ixz="0.0" iyy="0.000266" iyz="0.0" izz="0.000324"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.05"/>
+      </geometry>
+      <material name="AnodizedCyan"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.036" length="0.05"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ankle_pitch_joint" type="revolute">
+    <parent link="right_shank"/>
+    <child link="right_ankle_link"/>
+    <origin xyz="0 0 -0.40" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.9" upper="0.9" effort="220" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+  <link name="right_foot">
+    <inertial>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <mass value="1.3"/>
+      <inertia ixx="0.002177" ixy="0.0" ixz="0.0" iyy="0.007497" iyz="0.0" izz="0.009327"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.26 0.136 0.04"/>
+      </geometry>
+      <material name="PolishedTitanium"/>
+    </visual>
+    <collision>
+      <origin xyz="0.035 0 -0.025" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.26 0.136 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ankle_roll_joint" type="revolute">
+    <parent link="right_ankle_link"/>
+    <child link="right_foot"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="180" velocity="6.0"/>
+    <dynamics damping="0.1" friction="0.05"/>
+  </joint>
+</robot>

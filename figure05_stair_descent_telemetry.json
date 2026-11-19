@@ -1,0 +1,32 @@
+{
+  "module": "simulate_stair_descent_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 7.056,
+  "num_risers": 2,
+  "riser_drop_mm": 70.0,
+  "total_stair_descent_mm": 140.0,
+  "drop_x_m": [
+    0.38,
+    0.84
+  ],
+  "forward_distance_m": 2.365,
+  "pelvis_z_start_m": 1.064,
+  "pelvis_z_end_m": 0.915,
+  "pelvis_descent_cm": -14.95,
+  "left_foot_final_z_mm": -0.8,
+  "right_foot_final_z_mm": -4.5,
+  "roll_rms_deg": 2.0,
+  "pitch_rms_deg": 3.16,
+  "peak_left_grf_n": 1411.5,
+  "peak_right_grf_n": 1282.1,
+  "peak_knee_torque_nm": 130.1,
+  "motoring_mech_energy_j": 778.6,
+  "eccentric_braking_energy_j": 437.2,
+  "hot_copper_loss_j": 1134.1,
+  "net_dc_bus_regen_energy_j": 206.5,
+  "peak_regen_power_w": 221.9,
+  "regen_to_motoring_pct": 26.5,
+  "completed_without_fall": true,
+  "both_feet_descended_stairs": true
+}

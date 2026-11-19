@@ -1,0 +1,26 @@
+{
+  "module": "simulate_stairs_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 6.998,
+  "num_risers": 2,
+  "riser_height_mm": 70.0,
+  "total_stair_elevation_mm": 140.0,
+  "riser_x_m": [
+    0.34,
+    0.78
+  ],
+  "forward_distance_m": 2.394,
+  "pelvis_z_start_m": 0.924,
+  "pelvis_z_end_m": 1.055,
+  "pelvis_climb_cm": 13.08,
+  "left_foot_final_z_mm": 139.3,
+  "right_foot_final_z_mm": 162.3,
+  "roll_rms_deg": 1.24,
+  "pitch_rms_deg": 4.47,
+  "peak_left_grf_n": 1512.4,
+  "peak_right_grf_n": 962.5,
+  "peak_knee_torque_nm": 154.0,
+  "completed_without_fall": true,
+  "both_feet_mounted_top_step": true
+}

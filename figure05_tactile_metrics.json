@@ -1,0 +1,12 @@
+{
+    "grasped_object_mass_kg": 4.5,
+    "dynamic_jerk_accel_g": 1.5,
+    "causal_controller_oracle_free": true,
+    "open_loop_slip_mm": 3854.1,
+    "open_loop_result": "FAILED_DROPPED",
+    "gelskin_reflex_slip_mm": 0.26,
+    "gelskin_result": "RETAINED_STABILIZED",
+    "fpga_reflex_delay_ms": 1.75,
+    "observed_mu_hat_final": 0.191,
+    "peak_clamping_force_n": 319.8
+}

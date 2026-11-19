@@ -1,0 +1,17 @@
+{
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "completed_without_fall": true,
+  "duration_s": 12.14,
+  "peak_left_excursion_y_m": 0.43,
+  "return_final_y_m": -0.009,
+  "total_lateral_path_m": 1.413,
+  "min_inter_foot_y_clearance_m": 0.153,
+  "sagittal_shove_rejected_n": 65.0,
+  "roll_rms_deg": 4.21,
+  "pitch_rms_deg": 1.95,
+  "yaw_rms_deg": 0.53,
+  "peak_hip_roll_torque_nm": 350.0,
+  "peak_knee_torque_nm": 510.0,
+  "steady_total_grf_n": 536.4
+}

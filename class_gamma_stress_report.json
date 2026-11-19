@@ -1,0 +1,29 @@
+{
+    "actuator_model": "Class Gamma 2-Stage Compound Helical Planetary",
+    "stage_1_teeth": {
+        "sun": 20,
+        "planet": 16,
+        "ring": 52,
+        "ratio": 3.6
+    },
+    "stage_2_teeth": {
+        "sun": 16,
+        "planet": 24,
+        "ring": 64,
+        "ratio": 5.0
+    },
+    "total_reduction_ratio": 18.0,
+    "peak_torque_nm": 510.0,
+    "continuous_torque_nm": 180.0,
+    "gear_material": "AGMA Grade 3 Carburized Aerospace Steel AISI 9310 (AMS 6265)",
+    "agma_bending_stress_peak_mpa": 111.4,
+    "bending_safety_factor_peak": 4.62,
+    "bending_safety_factor_cont": 13.1,
+    "hertzian_contact_stress_peak_mpa": 908.0,
+    "contact_safety_factor_peak": 1.89,
+    "contact_safety_factor_cont": 3.19,
+    "planet_bearing_l10h_heavy_rms_hours": 273514.0,
+    "inverter_topology": "800V DC Bus 3-Level Flying-Capacitor 650V GaN FCML",
+    "gan_inverter_peak_eff_percent": 95.24,
+    "cooling_thermal_resistance_k_w": 0.42
+}

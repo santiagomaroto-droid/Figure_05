@@ -1,0 +1,23 @@
+{
+  "module": "simulate_locomanip_mujoco.py",
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "duration_s": 10.454,
+  "tote_mass_kg": 15.0,
+  "robot_distance_m": 1.243,
+  "tote_x_start_m": 0.27,
+  "tote_x_end_m": 1.536,
+  "tote_transport_m": 1.266,
+  "tote_z_peak_m": 1.04,
+  "tote_z_end_m": 0.64,
+  "grasp_engaged_time_s": 0.982,
+  "grasp_released_time_s": 8.954,
+  "post_release_mean_grf_n": 527.3,
+  "robot_unloaded_weight_n": 534.5,
+  "peak_total_grf_n": 2140.7,
+  "roll_rms_deg": 1.23,
+  "pitch_rms_deg": 2.38,
+  "peak_knee_torque_nm": 117.6,
+  "completed_without_fall": true,
+  "tote_placed_and_released": true
+}

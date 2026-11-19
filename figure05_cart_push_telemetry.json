@@ -1,0 +1,22 @@
+{
+  "mujoco_version": "3.6.0",
+  "skyhook_force_n": 0.0,
+  "unlatched_pure_contact": true,
+  "robot_mass_kg": 54.5,
+  "cart_mass_kg": 65.0,
+  "total_coupled_mass_kg": 119.5,
+  "completed_without_fall": true,
+  "duration_s": 9.79,
+  "cart_start_x_m": 0.82,
+  "cart_final_x_m": 2.128,
+  "cart_pushed_distance_m": 1.308,
+  "robot_walked_distance_m": 1.252,
+  "mean_active_push_force_n": 30.1,
+  "peak_push_force_n": 144.3,
+  "post_release_push_force_n": 0.0,
+  "cart_final_residual_speed_mps": 0.0,
+  "roll_rms_deg": 4.1,
+  "pitch_rms_deg": 4.37,
+  "peak_knee_torque_nm": 131.0,
+  "steady_total_grf_n": 532.6
+}
