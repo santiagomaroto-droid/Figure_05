@@ -1,0 +1,89 @@
+name: Figure 05 Physics & Hardware Validation CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  validate-engineering-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Scientific & MuJoCo Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Fast Unit & Regression Suite (< 3 s)
+        run: |
+          python -m unittest discover -s tests -v
+
+      - name: Run Full 31-Module Engineering & MuJoCo Test Suite
+        env:
+          MPLBACKEND: Agg
+        run: |
+          python run_all_validations.py
+
+      - name: Upload Generated Telemetry & Benchmarks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: figure05-validation-artifacts
+          path: |
+            FIGURE_05_SYSTEM_VALIDATION_REPORT.json
+            figure05_digital_twin_audit.json
+            figure05_mujoco_telemetry.json
+            figure05_push_recovery_telemetry.json
+            figure05_door_traversal_telemetry.json
+            figure05_uneven_terrain_telemetry.json
+            figure05_gantry_duck_telemetry.json
+            figure05_walking_telemetry.json
+            figure05_ramp_telemetry.json
+            figure05_stepup_telemetry.json
+            figure05_stepdown_telemetry.json
+            figure05_stairs_telemetry.json
+            figure05_stair_descent_telemetry.json
+            figure05_slippery_walk_telemetry.json
+            figure05_trip_recovery_telemetry.json
+            figure05_cart_push_telemetry.json
+            figure05_loaded_walk_telemetry.json
+            figure05_locomanip_telemetry.json
+            figure05_turning_telemetry.json
+            figure05_sidestep_telemetry.json
+            figure05_deadlift_telemetry.json
+            figure05_safety_bus_metrics.json
+            figure05_mujoco_push_recovery_benchmark.png
+            figure05_mujoco_door_traversal_benchmark.png
+            figure05_mujoco_uneven_terrain_benchmark.png
+            figure05_mujoco_gantry_duck_benchmark.png
+            figure05_mujoco_walking_benchmark.png
+            figure05_mujoco_ramp_benchmark.png
+            figure05_mujoco_stepup_benchmark.png
+            figure05_mujoco_stepdown_benchmark.png
+            figure05_mujoco_stairs_benchmark.png
+            figure05_mujoco_stair_descent_benchmark.png
+            figure05_mujoco_slippery_benchmark.png
+            figure05_mujoco_trip_benchmark.png
+            figure05_mujoco_cart_push_benchmark.png
+            figure05_mujoco_sidestep_benchmark.png
+            figure05_mujoco_loaded_walk_benchmark.png
+            figure05_mujoco_locomanip_benchmark.png
+            figure05_mujoco_turning_benchmark.png
+            figure05_mujoco_deadlift_benchmark.png
+            figure05_safety_bus_benchmark.png
+            figure05_mujoco_perturbation_response.png
+            figure05_sim2real_benchmark.png
+            class_gamma_actuator_blueprint.png
